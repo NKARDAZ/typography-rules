@@ -1,20 +1,34 @@
-# @yalla/package-template
+# Typography Rules
 
-> Your package description here
+> Модуль с заготовленными правилами типографики для использования в других пакетах.
 
 ## Installation
 
 ```bash
-npm install @yalla/package-template
+npm install @yalla/typography-rules
 ```
 
-## Usage
+## Usage Example
 
 ```typescript
-import { yourFunction } from '@yalla/package-template';
+// Import sorted by weight version of typographyRules const
+import { getWeightedRules, typographyRules } from '@yalla/typography-rules';
 
-const result = yourFunction();
-console.log(result);
+export function remarkTypography(options: { locale?: 'ru' | 'en' } = { locale: 'ru' }) {
+	return (tree: Root) => {
+		const locale = options.locale as keyof typeof typographyRules;
+
+		const rules = getWeightedRules(locale);
+
+		if (rules.length === 0) return;
+
+		function applyRules(text: string): string {
+			let value = text;
+			// Here you logic for applying rules to the text
+			return value;
+		}
+	};
+}
 ```
 
 ## Features
@@ -52,7 +66,3 @@ npm run test
 # UI for tests
 npm run test:ui
 ```
-
-## License
-
-MIT © [Your Name]

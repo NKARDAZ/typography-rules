@@ -45,5 +45,4 @@ function newRule(
 	} as RegExpTransformRule;
 }
 
-export default newRule;
 export { newRule };

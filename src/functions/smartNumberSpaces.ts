@@ -26,5 +26,3 @@ export function smartNumberSpaces(
 		}
 	);
 }
-
-export default smartNumberSpaces;

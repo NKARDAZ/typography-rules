@@ -1,13 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import { greet, newRule, registerRule, smartQuotes, smartNumberSpaces, CHARACTERS } from './index';
-import { typographyRules } from './typography/rules';
+import {
+	newRule,
+	registerRule,
+	smartQuotes,
+	smartNumberSpaces,
+	CHARACTERS,
+	typographyRules,
+} from './index';
 
 describe('typography-rules plugin', () => {
-	it('exports the greeting helper', () => {
-		expect(greet()).toBe('Hello World');
-		expect(greet('Alice')).toBe('Hello Alice');
-	});
-
 	it('creates replace rules with newRule()', () => {
 		const rule = newRule(/foo/g, 'bar', 5);
 

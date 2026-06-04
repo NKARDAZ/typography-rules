@@ -90,5 +90,3 @@ export function smartQuotes(
 
 	return result;
 }
-
-export default smartQuotes;
