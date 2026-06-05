@@ -8,8 +8,8 @@ import {
 	getRules,
 	getWeightedRules,
 	resetTypographyRules,
-	SPACES,
 } from './index';
+import { SPACES } from './unicodeStorage';
 
 describe('typography-rules plugin', () => {
 	it('creates replace rules with newRule()', () => {

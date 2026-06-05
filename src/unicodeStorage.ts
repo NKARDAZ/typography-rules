@@ -33,12 +33,32 @@ export function createCharacterSet<
 }
 
 export const CHARACTERS = createCharacters({
-
+	dagger: '\u2020', // †
+	daggerLeftGuard: '\u2E36', // ⸶
+	daggerRightGuard: '\u2E37', // ⸷
+	doubleDagger: '\u2021', // ‡
+	tripleDagger: '\u2E4B', // ⹋
+	turnedDagger: '\u2E38', // ⸸
+	numero: '\u2116', // №
+	number: '#',
+	section: '\u00A7', // §
+	sectionTopHalf: '\u2E39', // ⸹
+	at: '@',
 });
 
 export const DASHES = createCharacters({
-	em: '\u2014', // —
-	en: '\u2013', // –
+	em: '\u2014', // — Em dash
+	en: '\u2013', // – En dash
+	twm: '\u2E3A', // ⸺ Two-em dash
+	thm: '\u2E3B', // ⸻ Three-em dash
+	sh: '\u00AD', // Soft hyphen
+	fig: '\u2012', // ‒ Figure dash
+	h: '\u2010', // ‐ Hyphen
+	dh: '\u2E40', // ⹀ Double hyphen
+	nbh: '\u2011', // ‑ Non-breaking hyphen
+	hb: '\u2015', // ― Horizontal bar
+	hm: '-', // Hyphen minus
+	u: '_', // Underscore
 });
 
 export const SPACES = createCharacters({
@@ -62,10 +82,29 @@ export const SPACES = createCharacters({
 
 export const MATHS = createCharacters({
 	minus: '\u2212', // −
+	fractionSlash: '\u2044', // ⁄
+});
+
+export const TEMPERATUES = createCharacters({
+	CelsiusSolid: '\u2103', // ℃
+	FahrenheitSolid: '\u2109', // ℉
+	Kelvin: '\u212A', // K
+	Celsius: '°C',
+	Fahrenheit: '°F',
+	Delisle: '°D',
+	Leiden: '°L',
+	Newton: '°N',
+	Wedgewood: '°W',
+	Dalton: '°Da',
+	Hooke: '°H',
+	Rankine: '°R',
+	Reaumur: '°R[eé]',
+	Romer: '°R[oø]',
 });
 
 export const PUNCTUATION = createCharacterSet({
 	common: {
+		// Shared
 		leftSided: createCharacters({
 			invertedExclamation: '\u00A1', // ¡
 			invertedQuestion: '\u00BF', // ¿
@@ -76,16 +115,25 @@ export const PUNCTUATION = createCharacterSet({
 			exclamation: '!',
 			doubleExclamation: '\u203C', // ‼
 			exclamationQuestion: '\u2049', // ⁉
+			exclamationMedieval: '\u2E53', // ⹓
 			question: '?',
 			doubleQuestion: '\u2047', // ⁇
 			questionExclamation: '\u2048', // ⁈
+			questionMedieval: '\u2E54', // ⹔
 			interrobang: '\u203D', // ‽
 			dot: '.',
 			comma: ',',
+			commaMedieval: '\u2E4C', // ⹌
 			ellipsis: '\u2026', // …
+		}),
+		colons: createCharacters({
+			colon: ':',
+			semicolon: ';',
+			punctusElevatus: '\u2E4E', // ⹎
 		}),
 	},
 	ru: {
+		// Russian
 		leftSided: createCharacters({
 			outerQuoteOpen: '\u00AB', // «
 			innerQuoteOpen: '\u201E', // „
@@ -96,6 +144,7 @@ export const PUNCTUATION = createCharacterSet({
 		}),
 	},
 	en: {
+		// English
 		leftSided: createCharacters({
 			outerQuoteOpen: '\u201C', // “
 			innerQuoteOpen: '\u2018', // ‘
@@ -103,6 +152,28 @@ export const PUNCTUATION = createCharacterSet({
 		rightSided: createCharacters({
 			outerQuoteClose: '\u201D', // ”
 			innerQuoteClose: '\u2019', // ’
+		}),
+	},
+	fr: {
+		// Français
+		leftSided: createCharacters({
+			outerQuoteOpen: '\u00AB', // «
+			innerQuoteOpen: '\u2039', // ‹
+		}),
+		rightSided: createCharacters({
+			outerQuoteClose: '\u00BB', // »
+			innerQuoteClose: '\u203A', // ›
+		}),
+	},
+	is: {
+		// Íslenska
+		leftSided: createCharacters({
+			outerQuoteOpen: '\u201E', // „
+			innerQuoteOpen: '\u201A', // ‚
+		}),
+		rightSided: createCharacters({
+			outerQuoteClose: '\u201C', // “
+			innerQuoteClose: '\u2018', // ‘
 		}),
 	},
 });

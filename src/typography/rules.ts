@@ -1,5 +1,5 @@
 import { newRule, smartNumberSpaces, smartQuotes } from '@/functions';
-import { DASHES, MATHS, PUNCTUATION, SPACES, WALLET } from '@/storage';
+import { DASHES, MATHS, PUNCTUATION, SPACES, WALLET } from '@/unicodeStorage';
 import { typographyRules } from './store';
 
 typographyRules['common'] = [
