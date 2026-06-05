@@ -1,30 +1,110 @@
-import type { StringMap } from '@/types';
+import type { StringMap, CharacterData, CharacterSet, AnyCharacterSet, ProtoSet } from '@/types';
 
 const proto = {
-	join(this: object, joiner = '|'): string {
-		return Object.values(this as StringMap).join(joiner);
+	join(this: StringMap, joiner = '|'): string {
+		return Object.values(this).join(joiner);
 	},
 };
 
-export function createCharacters<T extends StringMap>(data: T) {
-	return Object.assign(Object.create(proto), data) as T & typeof proto;
+export function createCharacters<T extends CharacterData>(data: T): CharacterSet<T> {
+	return Object.assign(Object.create(proto), data) as CharacterSet<T>;
+}
+
+export function createProtoSet<
+	T extends { common?: Record<string, AnyCharacterSet> },
+>(): ProtoSet<T> {
+	return {
+		get(dataSet, key) {
+			const commonEntry = (this.common as Record<string, object>)?.[key as string] ?? {};
+			const localeEntry = (this[dataSet] as Record<string, object>)?.[key as string] ?? {};
+
+			return createCharacters({ ...commonEntry, ...localeEntry } as CharacterData);
+		},
+	};
+}
+
+export function createCharacterSet<
+	T extends { common?: Record<string, AnyCharacterSet> } & Record<
+		string,
+		Record<string, AnyCharacterSet>
+	>,
+>(data: T) {
+	return Object.assign(Object.create(createProtoSet<T>()), data) as T & ProtoSet<T>;
 }
 
 export const CHARACTERS = createCharacters({
-	emdash: '\u2014',
-	endash: '\u2013',
-	minus: '\u2212',
-	ellipsis: '\u2026',
-	no_break_space: '\u00A0',
-	thin_space: '\u2009',
-	ensp: '\u2002',
-	emsp: '\u2003',
-	space: ' ',
+
 });
 
-export const PUNCTUATION = createCharacters({
-	leftSided: '\u00A1\u00BF\u2E18\u2E2E',
-	rightSided: '\u203C\u2049\u2047\u2048\u203D.,!?\u2026',
+export const DASHES = createCharacters({
+	em: '\u2014', // —
+	en: '\u2013', // –
+});
+
+export const SPACES = createCharacters({
+	_: '\u0020', // Space
+	nb: '\u00A0', // Non-breaking space
+	en: '\u2002', // En space
+	em: '\u2003', // Em space
+	tem: '\u2004', // Three-per-em
+	fem: '\u2005', // Four-per-em
+	sem: '\u2006', // Six-per-em
+	fig: '\u2007', // Figure space
+	punct: '\u2008', // Punctuation space
+	thin: '\u2009', // Thin space
+	hair: '\u200A', // Hair space
+	zw: '\u200B', // Zero-width
+	nnb: '\u202F', // Narrow non-breaking space
+	mm: '\u205F', // Medium mathematical space
+	id: '\u3000', // Ideographic space
+	zwnb: '\uFEFF', // Zero-width non-breaking space
+});
+
+export const MATHS = createCharacters({
+	minus: '\u2212', // −
+});
+
+export const PUNCTUATION = createCharacterSet({
+	common: {
+		leftSided: createCharacters({
+			invertedExclamation: '\u00A1', // ¡
+			invertedQuestion: '\u00BF', // ¿
+			invertedInterrobang: '\u2E18', // ⸘
+			reversedQuestion: '\u2E2E', // ⸮
+		}),
+		rightSided: createCharacters({
+			exclamation: '!',
+			doubleExclamation: '\u203C', // ‼
+			exclamationQuestion: '\u2049', // ⁉
+			question: '?',
+			doubleQuestion: '\u2047', // ⁇
+			questionExclamation: '\u2048', // ⁈
+			interrobang: '\u203D', // ‽
+			dot: '.',
+			comma: ',',
+			ellipsis: '\u2026', // …
+		}),
+	},
+	ru: {
+		leftSided: createCharacters({
+			outerQuoteOpen: '\u00AB', // «
+			innerQuoteOpen: '\u201E', // „
+		}),
+		rightSided: createCharacters({
+			outerQuoteClose: '\u00BB', // »
+			innerQuoteClose: '\u201D', // “
+		}),
+	},
+	en: {
+		leftSided: createCharacters({
+			outerQuoteOpen: '\u201C', // “
+			innerQuoteOpen: '\u2018', // ‘
+		}),
+		rightSided: createCharacters({
+			outerQuoteClose: '\u201D', // ”
+			innerQuoteClose: '\u2019', // ’
+		}),
+	},
 });
 
 export const WALLET = createCharacters({

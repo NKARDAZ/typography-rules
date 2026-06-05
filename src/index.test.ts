@@ -4,11 +4,11 @@ import {
 	registerRule,
 	smartQuotes,
 	smartNumberSpaces,
-	CHARACTERS,
 	typographyRules,
 	getRules,
 	getWeightedRules,
 	resetTypographyRules,
+	SPACES,
 } from './index';
 
 describe('typography-rules plugin', () => {
@@ -129,9 +129,9 @@ describe('typography-rules plugin', () => {
 	});
 
 	it('inserts non-breaking spaces for large numbers', () => {
-		expect(smartNumberSpaces('12345')).toBe(`12${CHARACTERS.no_break_space}345`);
+		expect(smartNumberSpaces('12345')).toBe(`12${SPACES.nb}345`);
 		expect(smartNumberSpaces('1000000.1234', { separateFloat: true })).toBe(
-			`1${CHARACTERS.no_break_space}000${CHARACTERS.no_break_space}000.123${CHARACTERS.no_break_space}4`
+			`1${SPACES.nb}000${SPACES.nb}000.123${SPACES.nb}4`
 		);
 	});
 
@@ -143,14 +143,14 @@ describe('typography-rules plugin', () => {
 
 	it('respects custom minLength option', () => {
 		// minLength=4: 1234 должно форматироваться
-		expect(smartNumberSpaces('1234', { minLength: 4 })).toBe(`1${CHARACTERS.no_break_space}234`);
+		expect(smartNumberSpaces('1234', { minLength: 4 })).toBe(`1${SPACES.nb}234`);
 		// minLength=7: 123456 не должно
 		expect(smartNumberSpaces('123456', { minLength: 7 })).toBe('123456');
 	});
 
 	it('handles signed numbers', () => {
-		expect(smartNumberSpaces('+12345')).toBe(`+12${CHARACTERS.no_break_space}345`);
-		expect(smartNumberSpaces('-12345')).toBe(`-12${CHARACTERS.no_break_space}345`);
+		expect(smartNumberSpaces('+12345')).toBe(`+12${SPACES.nb}345`);
+		expect(smartNumberSpaces('-12345')).toBe(`-12${SPACES.nb}345`);
 	});
 
 	it('includes common locales in typographyRules', () => {

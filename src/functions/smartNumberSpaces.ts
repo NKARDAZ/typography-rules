@@ -1,4 +1,4 @@
-import { CHARACTERS } from '@/storage';
+import { SPACES } from '@/storage';
 import type { NumberSpaceSettings } from '@/types';
 
 export function smartNumberSpaces(
@@ -12,13 +12,13 @@ export function smartNumberSpaces(
 
 			if (intPart.length < minLength) return match;
 
-			const formattedInt = intPart.replace(/(\d)(?=(\d{3})+$)/g, `$1${CHARACTERS.no_break_space}`);
+			const formattedInt = intPart.replace(/(\d)(?=(\d{3})+$)/g, `$1${SPACES.nb}`);
 
 			let formattedFloat = floatPart ?? '';
 			if (separateFloat && floatPart) {
 				const sep = floatPart[0]; // '.' или ','
 				const digits = floatPart.slice(1);
-				const spaced = digits.replace(/(\d{3})(?=\d)/g, `$1${CHARACTERS.no_break_space}`);
+				const spaced = digits.replace(/(\d{3})(?=\d)/g, `$1${SPACES.nb}`);
 				formattedFloat = sep + spaced;
 			}
 
