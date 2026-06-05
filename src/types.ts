@@ -36,3 +36,5 @@ export interface NumberSpaceSettings {
 	minLength?: number;
 	separateFloat?: boolean;
 }
+
+export type StringMap = Record<string, string>;
