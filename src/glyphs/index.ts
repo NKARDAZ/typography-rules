@@ -106,6 +106,9 @@ export const TEMPERATUES = createCharacters({
 export const PUNCTUATION = createCharacterSet({
 	common: {
 		// Shared
+		generic: createCharacters({
+			apostrophe: '\u2019', // ’
+		}),
 		leftSided: createCharacters({
 			invertedExclamation: '\u00A1', // ¡
 			invertedQuestion: '\u00BF', // ¿

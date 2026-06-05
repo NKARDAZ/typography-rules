@@ -10,7 +10,7 @@ export const PROTECTED_PATTERNS = {
 	inlineCode: /`[^`\n]+`/g,
 	blockCode: /```[\s\S]*?```/g,
 	uuid: /\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/gi,
-	hash: /\b[0-9a-f]{7,40}\b/gi,
+	hash: /\b(?=[0-9a-f]*[a-f])[0-9a-f]{7,40}\b/gi,
 	ipv4: /\b(?:\d{1,3}\.){3}\d{1,3}\b/g,
 	ipv6: /\b(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}\b/g,
 	mac: /\b(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}\b/g,

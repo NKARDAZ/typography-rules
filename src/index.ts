@@ -5,7 +5,6 @@ for (const key of defaultRuleKeys) {
 }
 
 export * from './functions';
-export * as helpers from './helpers';
 export * from './typography/rules';
 export * from './typography/store';
 export type * from './types';

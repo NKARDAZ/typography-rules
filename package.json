@@ -27,6 +27,11 @@
       "types": "./dist/glyphs.d.ts",
       "import": "./dist/glyphs.mjs",
       "require": "./dist/glyphs.cjs"
+    },
+    "./helpers": {
+      "types": "./dist/helpers.d.ts",
+      "import": "./dist/helpers.mjs",
+      "require": "./dist/helpers.cjs"
     }
   },
   "files": [
@@ -36,7 +41,7 @@
     "LICENSE"
   ],
   "bundleSizeLimit": 102400,
-  "sideEffects": false,
+  "sideEffects": true,
   "engines": {
     "node": ">=24.0.0"
   },

@@ -30,20 +30,26 @@ defaultRules['common'] = [
 	newRule(/--/g, DASHES.em),
 	newRule(/\.\.\./g, PUNCTUATION.common.rightSided.ellipsis),
 
-	// Numbers
 	newRule(smartNumberSpaces, []),
-
-	// Apostrophe
-	newRule(/'/g, '\u2019', 200),
+	newRule(/'/g, PUNCTUATION.common.generic.apostrophe, 200),
 ];
 
 defaultRules['ru'] = [
 	// 0::Разное
 	newRule(/(\d+)[\s\u00A0](%|\u2030|\u2031)/g, '$1$2'),
-	newRule(smartQuotes, [], 100),
+	newRule(
+		smartQuotes,
+		[
+			{
+				outer: [PUNCTUATION.ru.leftSided.outerQuoteOpen, PUNCTUATION.ru.rightSided.outerQuoteClose],
+				inner: [PUNCTUATION.ru.leftSided.innerQuoteOpen, PUNCTUATION.ru.rightSided.innerQuoteClose],
+			},
+		],
+		100
+	),
 	newRule(
 		new RegExp(
-			`(?<=[${PUNCTUATION.get('ru', 'leftSided').join('')}«„\\(\\[])\\s+|(?<!\\s)\\s(?=[${PUNCTUATION.get('ru', 'rightSided').join('')}»“\\)\\]])`,
+			`(?<=[${PUNCTUATION.get('ru', 'leftSided').join('')}\\(\\[])\\s+|(?<!\\s)\\s(?=[${PUNCTUATION.get('ru', 'rightSided').join('')}\\)\\]])`,
 			'g'
 		),
 		'',
@@ -101,7 +107,16 @@ defaultRules['ru'] = [
 ];
 
 defaultRules['en'] = [
-	newRule(smartQuotes, [{ outer: ['“', '”'], inner: ['‘', '’'] }], 100),
+	newRule(
+		smartQuotes,
+		[
+			{
+				outer: [PUNCTUATION.en.leftSided.outerQuoteOpen, PUNCTUATION.en.rightSided.outerQuoteClose],
+				inner: [PUNCTUATION.en.leftSided.innerQuoteOpen, PUNCTUATION.en.rightSided.innerQuoteClose],
+			},
+		],
+		100
+	),
 	newRule(
 		new RegExp(
 			`(?<=[${PUNCTUATION.get('en', 'leftSided').join('')}“‘\\(\\[])\\s+|(?<!\\s)\\s(?=[${PUNCTUATION.get('en', 'rightSided').join('')}”’\\)\\]])`,
