@@ -45,10 +45,10 @@ typographyRules['ru'] = [
 	),
 	newRule(/\.»/g, '».', 1000),
 	newRule(
-		new RegExp(`(?<!\\d\\s)([${WALLET}])\\s(\\d{1,3}(?:\\d{3})*(?:,\\d+)?|\\d+(?:,\\d+)?)`, 'g'),
+		new RegExp(`(?<!\\d\\s)([${WALLET._}])\\s(\\d{1,3}(?:\\d{3})*(?:,\\d+)?|\\d+(?:,\\d+)?)`, 'g'),
 		`$2${CHARACTERS.no_break_space}$1`
 	),
-	newRule(new RegExp(`(\\d+)\\s([${WALLET}])`, 'g'), `$1${CHARACTERS.no_break_space}$2`),
+	newRule(new RegExp(`(\\d+)\\s([${WALLET._}])`, 'g'), `$1${CHARACTERS.no_break_space}$2`),
 
 	// 1::Тире
 	newRule(new RegExp(`^(${CHARACTERS.emdash})\\s`, 'gm'), `$1${CHARACTERS.no_break_space}`),
@@ -101,7 +101,7 @@ typographyRules['en'] = [
 		'',
 		1000
 	),
-	newRule(new RegExp(`([${WALLET}])\\s?(\\d+)`, 'g'), `$1$2`),
+	newRule(new RegExp(`([${WALLET._}])\\s?(\\d+)`, 'g'), `$1$2`),
 	newRule(/fi/g, '\uFB01'),
 	newRule(/fl/g, '\uFB02'),
 	newRule(/ffi/g, '\uFB03'),
