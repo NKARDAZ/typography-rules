@@ -19,3 +19,13 @@ import { applyDefaultRules } from '@yalla/typography-rules';
 
 applyDefaultRules();
 ```
+
+Or you can create your own rules (or combine them with the default ones) and apply them:
+
+```typescript
+import { newRule, registerRule } from '@yalla/typography-rules';
+
+registerRule('en', [
+	newRule(/test/g, 'ok'),
+])
+```

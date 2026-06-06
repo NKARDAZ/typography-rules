@@ -1,9 +1,32 @@
 import { SPACES } from '@/glyphs';
 import type { NumberSpaceSettings } from '@/types';
 
+/**
+ * Inserts non-breaking spaces into large numeric sequences inside text.
+ *
+ * This function detects integers and optional fractional parts, and formats
+ * them with `SPACES.nb` as a thousands separator. It also supports optional
+ * formatting of fractional parts.
+ *
+ * @param text Input text that may contain numbers.
+ *
+ * @param settings Formatting options:
+ * - `minLength` — minimum integer length before spacing is applied (default: 5)
+ * - `separateFloat` — whether to insert spacing inside fractional part groups
+ *
+ * @returns Text with formatted numbers containing non-breaking spaces.
+ *
+ * @example
+ * smartNumberSpaces("Price: 1234567");
+ * // "Price: 1 234 567"
+ *
+ * @example
+ * smartNumberSpaces("Value: 1234567.891011", { separateFloat: true });
+ * // "Value: 1 234 567.891 011"
+ */
 export function smartNumberSpaces(
 	text: string,
-	{ minLength = 5, separateFloat = false }: NumberSpaceSettings = {}
+	{ minLength = 5, separateFloat = false, spaceCharacter = SPACES.nb }: NumberSpaceSettings = {}
 ): string {
 	return text.replace(
 		/(?<![a-zA-Zа-яА-ЯёЁ\d])([+\-\u2212]?)(\d[\d\u00A0]*)([.,]\d+)?(?!\d)/g,
@@ -12,13 +35,13 @@ export function smartNumberSpaces(
 
 			if (intPart.length < minLength) return match;
 
-			const formattedInt = intPart.replace(/(\d)(?=(\d{3})+$)/g, `$1${SPACES.nb}`);
+			const formattedInt = intPart.replace(/(\d)(?=(\d{3})+$)/g, `$1${spaceCharacter}`);
 
 			let formattedFloat = floatPart ?? '';
 			if (separateFloat && floatPart) {
-				const sep = floatPart[0]; // '.' или ','
+				const sep = floatPart[0]; // '.' OR ','
 				const digits = floatPart.slice(1);
-				const spaced = digits.replace(/(\d{3})(?=\d)/g, `$1${SPACES.nb}`);
+				const spaced = digits.replace(/(\d{3})(?=\d)/g, `$1${spaceCharacter}`);
 				formattedFloat = sep + spaced;
 			}
 

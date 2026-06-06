@@ -1,10 +1,44 @@
 import type { Rule } from '@/types';
+
+/**
+ * Global typography rule registry.
+ *
+ * Stores rule pipelines grouped by locale key.
+ *
+ * Structure:
+ * - "common": rules applied to all locales
+ * - "[locale]": locale-specific rule overrides
+ *
+ * Each entry contains a list of transformation rules
+ * executed during typography processing.
+ */
 export const typographyRules: Record<string, Rule[] | undefined> = { common: [] };
 
+/**
+ * Returns the raw typography rule registry.
+ *
+ * This exposes the internal mutable rule store.
+ * Intended for debugging or advanced pipeline inspection.
+ */
 export function getRules() {
 	return typographyRules;
 }
 
+/**
+ * Returns a merged and weight-sorted rule pipeline.
+ *
+ * Combines:
+ * - common rules
+ * - locale-specific rules
+ *
+ * Sorting:
+ * - rules are ordered by `weight` (ascending)
+ * - rules without weight default to 0
+ * - stable order is preserved for equal weights
+ *
+ * @param locale - Target locale key
+ * @returns Flattened and sorted rule pipeline
+ */
 export function getWeightedRules(locale: string): Rule[] {
 	const common = typographyRules['common'] ?? [];
 	const localized = typographyRules[locale] ?? [];
@@ -25,6 +59,17 @@ export function getWeightedRules(locale: string): Rule[] {
 	});
 }
 
+/**
+ * Resets all typography rules in the registry.
+ *
+ * Clears all locale-specific pipelines including "common".
+ * After reset, all rule groups become empty arrays.
+ *
+ * Useful for:
+ * - testing
+ * - reinitialization
+ * - dynamic rule reloading
+ */
 export function resetTypographyRules(): void {
 	for (const key in typographyRules) {
 		typographyRules[key] = [];

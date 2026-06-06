@@ -1,10 +1,42 @@
 import { newRule, smartNumberSpaces, smartQuotes } from '@/functions';
-import { DASHES, MATHS, PUNCTUATION, SPACES, WALLET } from '@/glyphs';
+import { DASHES, LIGATURES, MATHS, PUNCTUATION, SPACES, WALLET } from '@/glyphs';
 import { typographyRules } from './store';
 import type { Rule } from '@/types';
 
+/**
+ * Default typography transformation rules grouped by locale.
+ *
+ * Each group defines a pipeline of RegExp and functional rules
+ * applied during text normalization and typographic processing.
+ *
+ * Structure:
+ * - common: rules applied to all locales
+ * - ru: Russian-specific typography rules
+ * - en: English-specific typography rules
+ *
+ * Rules include:
+ * - whitespace normalization
+ * - dash and punctuation correction
+ * - smart quotes processing
+ * - currency spacing rules
+ * - ligature substitution
+ */
 const defaultRules: Record<string, Rule[]> = {};
 
+/**
+ * Shared typography rules applied across all locales.
+ *
+ * Handles:
+ * - whitespace normalization
+ * - dash normalization (hyphens, en/em dashes)
+ * - ellipsis conversion
+ * - math symbol normalization
+ * - number spacing rules
+ * - apostrophe normalization
+ *
+ * This layer forms the base typography pipeline
+ * before locale-specific transformations.
+ */
 defaultRules['common'] = [
 	// Whitespace cleanup
 	newRule(/\s+/g, ' '),
@@ -24,10 +56,23 @@ defaultRules['common'] = [
 	newRule(/--/g, DASHES.em),
 	newRule(/\.\.\./g, PUNCTUATION.common.rightSided.ellipsis),
 
-	newRule(smartNumberSpaces, []),
+	newRule(smartNumberSpaces, [{ spaceCharacter: 'sfsa' }]),
 	newRule(/'/g, PUNCTUATION.common.generic.apostrophe, 200),
 ];
 
+/**
+ * Russian typography ruleset.
+ *
+ * Extends common rules with:
+ * - Russian-style smart quotes
+ * - spacing normalization for punctuation
+ * - em-dash formatting rules
+ * - currency formatting (RUB and others)
+ * - abbreviation spacing rules
+ * - grammatical particle spacing rules
+ *
+ * Designed for Cyrillic text normalization.
+ */
 defaultRules['ru'] = [
 	// 0::Разное
 	newRule(/(\d+)[\s\u00A0](%|\u2030|\u2031)/g, '$1$2'),
@@ -100,6 +145,17 @@ defaultRules['ru'] = [
 	),
 ];
 
+/**
+ * English typography ruleset.
+ *
+ * Includes:
+ * - smart quote replacement (US/UK style)
+ * - ligature substitution (fi, fl, ffi, ffl)
+ * - currency formatting normalization
+ * - spacing cleanup for punctuation
+ *
+ * Designed for Latin-script typography processing.
+ */
 defaultRules['en'] = [
 	newRule(
 		smartQuotes,
@@ -120,15 +176,38 @@ defaultRules['en'] = [
 		1000
 	),
 	newRule(new RegExp(`([${WALLET.join()}])\\s?(\\d+)`, 'g'), `$1$2`),
-	newRule(/fi/g, '\uFB01'),
-	newRule(/fl/g, '\uFB02'),
-	newRule(/ffi/g, '\uFB03'),
-	newRule(/ffl/g, '\uFB04'),
+	newRule(/fi/g, LIGATURES.fi),
+	newRule(/fl/g, LIGATURES.fl),
+	newRule(/ffi/g, LIGATURES.ffi),
+	newRule(/ffl/g, LIGATURES.ffl),
 ];
 
+/**
+ * Available typography rule groups.
+ *
+ * Represents all supported locale keys in the default ruleset.
+ */
 export type defaultRuleKeys = keyof typeof defaultRules;
+
+/**
+ * Runtime list of available typography rule groups.
+ */
 export const defaultRuleKeys = Object.keys(defaultRules) as (keyof typeof defaultRules)[];
 
+/**
+ * Applies default typography rules to the global typography registry.
+ *
+ * If no locale is specified:
+ * - all rule groups are applied
+ *
+ * If locale is specified:
+ * - only that group is applied
+ *
+ * This function initializes the typography pipeline
+ * before processing text transformations.
+ *
+ * @param from - Optional locale key to apply specific rule group
+ */
 export function applyDefaultRules(from?: string): void {
 	if (!from) {
 		for (const key of defaultRuleKeys) {

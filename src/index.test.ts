@@ -13,6 +13,8 @@ import {
 import { SPACES, createCharacters, createCharacterSet } from './glyphs';
 import { PROTECTED_PATTERNS } from './helpers';
 
+applyDefaultRules();
+
 // ─────────────────────────────────────────────
 // newRule
 // ─────────────────────────────────────────────
@@ -101,12 +103,22 @@ describe('registerRule()', () => {
 // smartQuotes
 // ─────────────────────────────────────────────
 describe('smartQuotes()', () => {
-	it('converts outer double quotes (Russian default)', () => {
-		expect(smartQuotes('"текст"')).toBe('«текст»');
+	it('converts outer double quotes (English default)', () => {
+		expect(smartQuotes('"text"')).toBe('“text”');
 	});
 
 	it('converts nested double+single quotes', () => {
-		expect(smartQuotes('"Привет \'мир\'"')).toBe('«Привет „мир“»');
+		expect(smartQuotes('"Hello \'world\'"')).toBe('“Hello ‘world’”');
+	});
+
+	it('converts outer double quotes (Russian)', () => {
+		expect(smartQuotes('"текст"', { outer: ['«', '»'] })).toBe('«текст»');
+	});
+
+	it('converts nested double+single quotes (Russian)', () => {
+		expect(smartQuotes('"Привет \'мир\'"', { outer: ['«', '»'], inner: ['„', '“'] })).toBe(
+			'«Привет „мир“»'
+		);
 	});
 
 	it('preserves apostrophes', () => {
@@ -120,15 +132,15 @@ describe('smartQuotes()', () => {
 	});
 
 	it('opens inner double-quote after space inside outer quote', () => {
-		expect(smartQuotes('"outer "inner" end"')).toBe('«outer „inner“ end»');
+		expect(smartQuotes('"outer "inner" end"')).toBe('“outer ‘inner’ end”');
 	});
 
 	it('treats double-quote between non-space chars as closing', () => {
-		expect(smartQuotes('"word"end')).toBe('«word»end');
+		expect(smartQuotes('"word"end')).toBe('“word”end');
 	});
 
 	it('closes quote at end of string', () => {
-		expect(smartQuotes('"текст"')).toBe('«текст»');
+		expect(smartQuotes('"текст"', { outer: ['«', '»'] })).toBe('«текст»');
 	});
 
 	it('handles single quotes as inner quotes inside double quotes', () => {
@@ -140,7 +152,7 @@ describe('smartQuotes()', () => {
 	});
 
 	it('treats quote surrounded by spaces on both sides inside outer quote as closing', () => {
-		const result = smartQuotes('"text" end"');
+		const result = smartQuotes('"text" end"', { outer: ['«', '»'] });
 		expect(result).toBe('«text» end«');
 	});
 });

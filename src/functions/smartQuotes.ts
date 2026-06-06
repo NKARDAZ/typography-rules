@@ -1,11 +1,39 @@
+import { PUNCTUATION } from '@/glyphs';
 import type { QuoteSettings } from '@/types';
 
+/**
+ * Smart typographic quotes replacement.
+ *
+ * Converts straight quotes (`"` and `'`) into typographically correct
+ * opening/closing quotes based on nesting context and surrounding characters.
+ *
+ * Supports:
+ * - Outer and inner quote levels
+ * - Nested quotation handling
+ * - Apostrophe detection for contractions (e.g. don't, it's)
+ *
+ * @param text - Input string containing raw quotes.
+ * @param quotes - Quote configuration for outer and inner levels.
+ * @param quotes.outer - Pair of outer quotes: [open, close]
+ * @param quotes.inner - Pair of inner quotes: [open, close]
+ *
+ * @returns String with typographically corrected quotes.
+ *
+ * @example
+ * smartQuotes('"Hello"');
+ * // «Hello» (depending on configuration)
+ *
+ * @example
+ * smartQuotes('"He said \'hi\'"');
+ * // «He said „hi“»
+ */
+// export function smartQuotes(text: string, quotes: QuoteSettings = {} as QuoteSettings): string {
 export function smartQuotes(
 	text: string,
-	quotes: QuoteSettings = {
-		outer: ['\u00AB', '\u00BB'],
-		inner: ['\u201E', '\u201C'],
-	}
+	{
+		outer = [PUNCTUATION.en.leftSided.outerQuoteOpen, PUNCTUATION.en.rightSided.outerQuoteClose],
+		inner = [PUNCTUATION.en.leftSided.innerQuoteOpen, PUNCTUATION.en.rightSided.innerQuoteClose],
+	}: QuoteSettings = {}
 ): string {
 	let result = '';
 	// Stack tracks which quote char opened each level: '"' or "'"
@@ -34,7 +62,7 @@ export function smartQuotes(
 			}
 
 			if (isOpen) {
-				const q = stack.length === 0 ? quotes.outer : quotes.inner;
+				const q = stack.length === 0 ? outer : inner;
 				result += q[0];
 				stack.push('"');
 			} else {
@@ -43,7 +71,7 @@ export function smartQuotes(
 				if (matchIdx !== -1) {
 					stack.splice(stack.length - 1 - matchIdx, 1);
 				}
-				const q = stack.length === 0 ? quotes.outer : quotes.inner;
+				const q = stack.length === 0 ? outer : inner;
 				result += q[1];
 			}
 			continue;
@@ -73,14 +101,14 @@ export function smartQuotes(
 			const isOpen = !hasOpenSingle;
 
 			if (isOpen) {
-				result += quotes.inner[0];
+				result += inner[0];
 				stack.push("'");
 			} else {
 				const matchIdx = [...stack].reverse().indexOf("'");
 				if (matchIdx !== -1) {
 					stack.splice(stack.length - 1 - matchIdx, 1);
 				}
-				result += quotes.inner[1];
+				result += inner[1];
 			}
 			continue;
 		}
