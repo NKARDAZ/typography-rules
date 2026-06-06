@@ -29,6 +29,19 @@ export type PatternSet<T extends PatternData> = {
 	readonly values: RegExp[];
 
 	/**
+	 * Returns a single RegExp that combines all patterns via alternation.
+	 *
+	 * Built from `.source` of each pattern — safe to cache, as `lastIndex`
+	 * is not involved at construction time.
+	 *
+	 * Prefer this over iterating `.values` with sequential `.replace()` calls —
+	 * a single combined pass prevents one pattern from corrupting input for another.
+	 *
+	 * @param flags - RegExp flags for the combined pattern (default: `'g'`)
+	 */
+	combined(flags?: string): RegExp;
+
+	/**
 	 * Iterator over all RegExp patterns in the registry.
 	 *
 	 * Each access returns fresh `RegExp` instances with `lastIndex = 0`,
@@ -49,5 +62,6 @@ export type PatternSet<T extends PatternData> = {
  */
 export interface PatternProto {
 	readonly values: RegExp[];
+	combined(flags?: string): RegExp;
 	[Symbol.iterator](): Iterator<RegExp>;
 }

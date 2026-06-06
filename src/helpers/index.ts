@@ -50,6 +50,12 @@ const patternProto: PatternProto = {
 			.filter((v): v is RegExp => v !== undefined);
 	},
 
+	combined(flags = 'g'): RegExp {
+		const source = this.values.map((pattern) => `(${pattern.source})`).join('|');
+
+		return new RegExp(source, flags);
+	},
+
 	*[Symbol.iterator](): Iterator<RegExp> {
 		for (const key of Object.keys(this)) {
 			const desc = Object.getOwnPropertyDescriptor(this, key);
