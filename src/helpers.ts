@@ -1,3 +1,4 @@
+// Use only Private Use Area character sequences
 export const NODE_MARKER = '\uE000\uEDFD\uF43E';
 export const PROTECTION_MARKER = '\uE001\uEDF1\uF111';
 
@@ -23,20 +24,18 @@ export const PROTECTED_PATTERNS = {
 	orcid: /\b\d{4}-\d{4}-\d{4}-\d{3}[\dX]\b/g,
 
 	get values(): RegExp[] {
-		const keys = Object.keys(this) as (keyof typeof PROTECTED_PATTERNS)[];
-
-		return keys
-			.filter(
-				(key): key is Exclude<typeof key, 'values' | typeof Symbol.iterator> =>
-					key !== 'values' && typeof key !== 'symbol'
-			)
+		return (Object.keys(this) as (keyof typeof PROTECTED_PATTERNS)[])
+			.filter((key) => {
+				const desc = Object.getOwnPropertyDescriptor(this, key);
+				return desc?.value instanceof RegExp;
+			})
 			.map((key) => this[key] as RegExp);
 	},
 
 	*[Symbol.iterator]() {
-		const keys = Object.keys(this) as (keyof typeof PROTECTED_PATTERNS)[];
-		for (const key of keys) {
-			if (key !== 'values' && typeof key !== 'symbol') {
+		for (const key of Object.keys(this) as (keyof typeof PROTECTED_PATTERNS)[]) {
+			const desc = Object.getOwnPropertyDescriptor(this, key);
+			if (desc?.value instanceof RegExp) {
 				yield this[key];
 			}
 		}

@@ -86,21 +86,21 @@ export const MATHS = createCharacters({
 	fractionSlash: '\u2044', // ⁄
 });
 
-export const TEMPERATUES = createCharacters({
-	CelsiusSolid: '\u2103', // ℃
-	FahrenheitSolid: '\u2109', // ℉
-	Kelvin: '\u212A', // K
-	Celsius: '°C',
-	Fahrenheit: '°F',
-	Delisle: '°D',
-	Leiden: '°L',
-	Newton: '°N',
-	Wedgewood: '°W',
-	Dalton: '°Da',
-	Hooke: '°H',
-	Rankine: '°R',
-	Reaumur: '°R[eé]',
-	Romer: '°R[oø]',
+export const TEMPERATURES = createCharacters({
+	celsiusSolid: '\u2103', // ℃
+	fahrenheitSolid: '\u2109', // ℉
+	kelvin: '\u212A', // K
+	celsius: '°C',
+	fahrenheit: '°F',
+	delisle: '°D',
+	leiden: '°L',
+	newton: '°N',
+	wedgewood: '°W',
+	dalton: '°Da',
+	hooke: '°H',
+	rankine: '°R',
+	reaumur: '°R[eé]',
+	romer: '°R[oø]',
 });
 
 export const PUNCTUATION = createCharacterSet({
