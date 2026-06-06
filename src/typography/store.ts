@@ -1,5 +1,5 @@
 import type { Rule } from '@/types';
-export const typographyRules: Record<string, Rule[] | undefined> = {};
+export const typographyRules: Record<string, Rule[] | undefined> = { common: [] };
 
 export function getRules() {
 	return typographyRules;

@@ -3,12 +3,6 @@ import { DASHES, MATHS, PUNCTUATION, SPACES, WALLET } from '@/glyphs';
 import { typographyRules } from './store';
 import type { Rule } from '@/types';
 
-export function applyDefaultRules(from: string): void {
-	if (defaultRules[from]) {
-		typographyRules[from] = defaultRules[from];
-	}
-}
-
 const defaultRules: Record<string, Rule[]> = {};
 
 defaultRules['common'] = [
@@ -134,3 +128,16 @@ defaultRules['en'] = [
 
 export type defaultRuleKeys = keyof typeof defaultRules;
 export const defaultRuleKeys = Object.keys(defaultRules) as (keyof typeof defaultRules)[];
+
+export function applyDefaultRules(from?: string): void {
+	if (!from) {
+		for (const key of defaultRuleKeys) {
+			typographyRules[key] = defaultRules[key];
+		}
+		return;
+	}
+
+	if (defaultRules[from]) {
+		typographyRules[from] = defaultRules[from];
+	}
+}
