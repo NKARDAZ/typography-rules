@@ -24,14 +24,14 @@
       "require": "./dist/index.cjs"
     },
     "./glyphs": {
-      "types": "./dist/glyphs.d.ts",
-      "import": "./dist/glyphs.mjs",
-      "require": "./dist/glyphs.cjs"
+      "types": "./dist/glyphs/index.d.ts",
+      "import": "./dist/glyphs/index.mjs",
+      "require": "./dist/glyphs/index.cjs"
     },
     "./helpers": {
-      "types": "./dist/helpers.d.ts",
-      "import": "./dist/helpers.mjs",
-      "require": "./dist/helpers.cjs"
+      "types": "./dist/helpers/index.d.ts",
+      "import": "./dist/helpers/index.mjs",
+      "require": "./dist/helpers/index.cjs"
     }
   },
   "files": [

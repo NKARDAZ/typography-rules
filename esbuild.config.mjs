@@ -22,13 +22,13 @@ const glyphsMJS = await build({
 	...common,
 	entryPoints: ['src/glyphs/index.ts'],
 	format: 'esm',
-	outfile: 'dist/glyphs.mjs',
+	outfile: 'dist/glyphs/index.mjs',
 });
 const glyphsCJS = await build({
 	...common,
 	entryPoints: ['src/glyphs/index.ts'],
 	format: 'cjs',
-	outfile: 'dist/glyphs.cjs',
+	outfile: 'dist/glyphs/index.cjs',
 });
 
 await writeFile('dist/glyphs-meta-esm.json', JSON.stringify(glyphsMJS.metafile));
@@ -36,15 +36,15 @@ await writeFile('dist/glyphs-meta-cjs.json', JSON.stringify(glyphsCJS.metafile))
 
 const helpersMJS = await build({
 	...common,
-	entryPoints: ['src/helpers.ts'],
+	entryPoints: ['src/helpers/index.ts'],
 	format: 'esm',
-	outfile: 'dist/helpers.mjs',
+	outfile: 'dist/helpers/index.mjs',
 });
 const helpersCJS = await build({
 	...common,
-	entryPoints: ['src/helpers.ts'],
+	entryPoints: ['src/helpers/index.ts'],
 	format: 'cjs',
-	outfile: 'dist/helpers.cjs',
+	outfile: 'dist/helpers/index.cjs',
 });
 
 await writeFile('dist/helpers-meta-esm.json', JSON.stringify(helpersMJS.metafile));
@@ -56,13 +56,13 @@ const externalImportsPlugin = (format) => ({
 		build.onResolve({ filter: /.*/ }, (args) => {
 			if (args.importer && args.path.includes('/glyphs')) {
 				return {
-					path: format === 'esm' ? './glyphs.mjs' : './glyphs.cjs',
+					path: format === 'esm' ? './glyphs/index.mjs' : './glyphs/index.cjs',
 					external: true,
 				};
 			}
 			if (args.importer && args.path.includes('/helpers')) {
 				return {
-					path: format === 'esm' ? './helpers.mjs' : './helpers.cjs',
+					path: format === 'esm' ? './helpers/index.mjs' : './helpers/index.cjs',
 					external: true,
 				};
 			}
@@ -88,8 +88,16 @@ const resultCJS = await build({
 await writeFile('dist/meta-esm.json', JSON.stringify(resultMJS.metafile));
 await writeFile('dist/meta-cjs.json', JSON.stringify(resultCJS.metafile));
 
-const distFiles = readdirSync('dist').filter((f) => !f.endsWith('.map') && !f.endsWith('.json'));
-const totalSize = distFiles.reduce((sum, f) => sum + statSync(`dist/${f}`).size, 0);
+function getDirSize(dir) {
+	return readdirSync(dir).reduce((sum, f) => {
+		const full = `${dir}/${f}`;
+		if (statSync(full).isDirectory()) return sum + getDirSize(full);
+		if (f.endsWith('.map') || f.endsWith('.json')) return sum;
+		return sum + statSync(full).size;
+	}, 0);
+}
+
+const totalSize = getDirSize('dist');
 
 if (totalSize > limit) {
 	console.log('\x1b[33m%s\x1b[0m', `Bundle too large: ${totalSize} > ${limit}`);

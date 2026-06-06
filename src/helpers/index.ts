@@ -2,6 +2,9 @@
 export const NODE_MARKER = '\uE000\uEDFD\uF43E';
 export const PROTECTION_MARKER = '\uE001\uEDF1\uF111';
 
+export const NODE_MARKER_REGEX = new RegExp(NODE_MARKER, 'g');
+export const PROTECTION_MARKER_REGEX = new RegExp(PROTECTION_MARKER, 'g');
+
 export const PROTECTED_PATTERNS = {
 	email: /[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+/g,
 	url: /https?:\/\/[^\s]+/g,
