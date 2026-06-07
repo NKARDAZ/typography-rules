@@ -56,6 +56,21 @@ const patternProto: PatternProto = {
 		return new RegExp(source, flags);
 	},
 
+	insert(patterns: PatternData): void {
+		for (const key of Object.keys(patterns)) {
+			const src = patterns[key]!.source;
+			const flags = patterns[key]!.flags;
+
+			Object.defineProperty(this, key, {
+				get(): RegExp {
+					return new RegExp(src, flags);
+				},
+				enumerable: true,
+				configurable: true,
+			});
+		}
+	},
+
 	*[Symbol.iterator](): Iterator<RegExp> {
 		for (const key of Object.keys(this)) {
 			const desc = Object.getOwnPropertyDescriptor(this, key);
@@ -145,3 +160,58 @@ export const PROTECTED_PATTERNS = createPatterns({
 	doi: /\b10\.\d{4,9}\/[-._;()/:A-Z0-9]+\b/gi,
 	orcid: /\b\d{4}-\d{4}-\d{4}-\d{3}[\dX]\b/g,
 });
+
+/**
+ * Wraps NODE_MARKER sequences and PROTECTED_PATTERNS matches
+ * with PROTECTION_MARKER, storing originals for later restoration.
+ *
+ * @returns Tuple of [protected text, captured matches]
+ */
+export function protect(text: string): [string, string[]] {
+	const captured: string[] = [];
+
+	const withNodeMarkers = text.replace(NODE_MARKER_REGEX, (match) => {
+		captured.push(match);
+		return PROTECTION_MARKER;
+	});
+
+	const withPatterns = withNodeMarkers.replace(PROTECTED_PATTERNS.combined(), (match) => {
+		captured.push(match);
+		return PROTECTION_MARKER;
+	});
+
+	return [withPatterns, captured];
+}
+
+/**
+ * Restores original strings previously captured by `protect`.
+ */
+export function unprotect(text: string, captured: string[]): string {
+	const queue = [...captured];
+	return text.replace(PROTECTION_MARKER_REGEX, () => queue.shift() ?? '');
+}
+
+/**
+ * Joins an array of objects with a `value: string` field
+ * into a single string using NODE_MARKER as separator.
+ *
+ * Intended for combining sibling text nodes before rule application,
+ * so that rules can operate across node boundaries when needed.
+ */
+export function joinNodes<T extends { value: string }>(nodes: T[]): string {
+	return nodes.map((n) => n.value).join(NODE_MARKER);
+}
+
+/**
+ * Splits a transformed string by NODE_MARKER and writes
+ * segments back into the corresponding nodes.
+ *
+ * If segment count doesn't match nodes count (e.g. a rule
+ * consumed a marker), original values are preserved as fallback.
+ */
+export function splitNodes<T extends { value: string }>(text: string, nodes: T[]): void {
+	const segments = text.split(NODE_MARKER);
+	nodes.forEach((n, i) => {
+		n.value = segments[i] ?? n.value;
+	});
+}

@@ -12,7 +12,7 @@ import {
 	rulesCount,
 } from './index';
 import { SPACES, createCharacters, createCharacterSet } from './glyphs';
-import { PROTECTED_PATTERNS } from './helpers';
+import { createPatterns, joinNodes, NODE_MARKER, protect, PROTECTED_PATTERNS, splitNodes, unprotect } from './helpers';
 
 applyDefaultRules();
 
@@ -571,5 +571,110 @@ describe('smartQuotes() — space-on-both-sides branch', () => {
 		// На пустом стеке всегда open (stack.length === 0 → isOpen=true), не зависит от пробелов
 		const result = smartQuotes('" text "', { outer: ['«', '»'] });
 		expect(result).toBe('« text »');
+	});
+});
+
+describe('helpers — PROTECTED_PATTERNS.insert()', () => {
+	it('dynamically adds a new pattern and it becomes available', () => {
+		// Добавляем новый паттерн
+		PROTECTED_PATTERNS.insert({
+			myNewPattern: /custom-test/g,
+		});
+
+		// Проверяем наличие ключа и его тип
+		const pattern = PROTECTED_PATTERNS['myNewPattern'];
+		expect(pattern).toBeInstanceOf(RegExp);
+		expect(pattern?.source).toBe('custom-test');
+	});
+
+	it('newly inserted pattern is included in .values and .combined()', () => {
+		PROTECTED_PATTERNS.insert({
+			anotherPattern: /foo-bar-baz/g,
+		});
+
+		// Проверяем values
+		expect(PROTECTED_PATTERNS.values.some((p) => p.source === 'foo-bar-baz')).toBe(true);
+
+		// Проверяем combined
+		const combined = PROTECTED_PATTERNS.combined();
+		expect(combined.source).toContain('foo-bar-baz');
+	});
+});
+
+describe('helpers — protect() and unprotect()', () => {
+	it('protects text and restores it correctly using unprotect', () => {
+		const input = 'Check this url: https://google.com and code: `console.log(1)`';
+		const [protectedText, captured] = protect(input);
+
+		// Проверяем, что в защищенном тексте нет исходных данных
+		expect(protectedText).not.toContain('https://google.com');
+		expect(protectedText).not.toContain('`console.log(1)`');
+
+		// Восстанавливаем
+		const restored = unprotect(protectedText, captured);
+		expect(restored).toBe(input);
+	});
+
+	it('handles NODE_MARKER correctly within protect', () => {
+		const textWithNode = `Line 1${NODE_MARKER}Line 2`;
+		const [protectedText, captured] = protect(textWithNode);
+
+		const restored = unprotect(protectedText, captured);
+		expect(restored).toBe(textWithNode);
+	});
+
+	it('returns empty string if captured array is empty during unprotect', () => {
+		// Тест на случай, если кто-то попытается вызвать unprotect с пустым массивом
+		const result = unprotect('some text', []);
+		expect(result).toBe('some text');
+	});
+});
+
+describe('helpers — createPatterns behavior', () => {
+	it('creates fresh RegExp instance on every access (lastIndex reset)', () => {
+		const myPatterns = createPatterns({ test: /a/g });
+
+		// Первый проход
+		myPatterns.test.test('aa');
+		expect(myPatterns.test.lastIndex).toBe(0);
+
+		// Второй проход должен снова начинаться с 0
+		myPatterns.test.test('a');
+		expect(myPatterns.test.lastIndex).toBe(0);
+	});
+});
+
+describe('helpers — joinNodes() and splitNodes()', () => {
+	it('joinNodes() concatenates node values with NODE_MARKER', () => {
+		const nodes = [{ value: 'part1' }, { value: 'part2' }];
+		const joined = joinNodes(nodes);
+		expect(joined).toBe(`part1${NODE_MARKER}part2`);
+	});
+
+	it('splitNodes() updates node values from joined string', () => {
+		const nodes = [{ value: '' }, { value: '' }];
+		const text = `new1${NODE_MARKER}new2`;
+
+		splitNodes(text, nodes);
+
+		expect(nodes[0]!.value).toBe('new1');
+		expect(nodes[1]!.value).toBe('new2');
+	});
+
+	it('splitNodes() preserves original value as fallback if segments are missing', () => {
+		// Здесь покрывается ветка: segments[i] ?? n.value
+		// У нас 3 узла, но в строке только 1 сегмент (NODE_MARKER потерялся)
+		const nodes = [{ value: 'keep1' }, { value: 'keep2' }, { value: 'keep3' }];
+		const text = 'short-text';
+
+		splitNodes(text, nodes);
+
+		expect(nodes[0]!.value).toBe('short-text'); // Первый узел получил сегмент
+		expect(nodes[1]!.value).toBe('keep2'); // Остальные получили fallback
+		expect(nodes[2]!.value).toBe('keep3');
+	});
+
+	it('splitNodes() handles empty array of nodes', () => {
+		expect(() => splitNodes('test', [])).not.toThrow();
 	});
 });

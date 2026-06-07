@@ -17,40 +17,51 @@ export type PatternData = Record<string, RegExp>;
  */
 export type PatternSet<T extends PatternData> = {
 	readonly [K in keyof T]: RegExp;
-} & {
-	/**
-	 * Returns all RegExp patterns from the registry.
-	 *
-	 * Each access returns fresh `RegExp` instances with `lastIndex = 0`,
-	 * preventing stateful issues with the `g` flag.
-	 *
-	 * Used when applying batch protection in preprocessing pipelines.
-	 */
-	readonly values: RegExp[];
+} & Record<string, RegExp | undefined> & {
+		/**
+		 * Returns all RegExp patterns from the registry.
+		 *
+		 * Each access returns fresh `RegExp` instances with `lastIndex = 0`,
+		 * preventing stateful issues with the `g` flag.
+		 *
+		 * Used when applying batch protection in preprocessing pipelines.
+		 */
+		readonly values: RegExp[];
 
-	/**
-	 * Returns a single RegExp that combines all patterns via alternation.
-	 *
-	 * Built from `.source` of each pattern — safe to cache, as `lastIndex`
-	 * is not involved at construction time.
-	 *
-	 * Prefer this over iterating `.values` with sequential `.replace()` calls —
-	 * a single combined pass prevents one pattern from corrupting input for another.
-	 *
-	 * @param flags - RegExp flags for the combined pattern (default: `'g'`)
-	 */
-	combined(flags?: string): RegExp;
+		/**
+		 * Returns a single RegExp that combines all patterns via alternation.
+		 *
+		 * Built from `.source` of each pattern — safe to cache, as `lastIndex`
+		 * is not involved at construction time.
+		 *
+		 * Prefer this over iterating `.values` with sequential `.replace()` calls —
+		 * a single combined pass prevents one pattern from corrupting input for another.
+		 *
+		 * @param flags - RegExp flags for the combined pattern (default: `'g'`)
+		 */
+		combined(flags?: string): RegExp;
 
-	/**
-	 * Iterator over all RegExp patterns in the registry.
-	 *
-	 * Each access returns fresh `RegExp` instances with `lastIndex = 0`,
-	 * preventing stateful issues with the `g` flag.
-	 *
-	 * Enables usage in for..of loops, spreading, and pipeline-based processing.
-	 */
-	[Symbol.iterator](): Iterator<RegExp>;
-};
+		/**
+		 * Populates the registry with new patterns.
+		 *
+		 * Each pattern is stored as a getter that returns a new `RegExp` instance
+		 * on every access, ensuring `lastIndex` is always reset to `0` regardless
+		 * of how the pattern was previously used.
+		 *
+		 * @param patterns - Raw map of named RegExp patterns
+		 */
+		insert(patterns: PatternData): void;
+
+		/**
+		 * Iterator over all RegExp patterns in the registry.
+		 *
+		 * Each access returns fresh `RegExp` instances with `lastIndex = 0`,
+		 * preventing stateful issues with the `g` flag.
+		 *
+		 * Enables usage in for..of loops, spreading, and pipeline-based processing.
+		 */
+		[Symbol.iterator](): Iterator<RegExp>;
+	};
 
 /**
  * Prototype object attached to all pattern registries created by `createPatterns`.
@@ -63,5 +74,6 @@ export type PatternSet<T extends PatternData> = {
 export interface PatternProto {
 	readonly values: RegExp[];
 	combined(flags?: string): RegExp;
+	insert(patterns: PatternData): void;
 	[Symbol.iterator](): Iterator<RegExp>;
 }
