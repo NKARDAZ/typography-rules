@@ -1,4 +1,4 @@
-import { newRule, smartNumberSpaces, smartQuotes } from '@/functions';
+import { newRule, smartNumberGrouping, smartQuotes } from '@/functions';
 import { PUNCTUATION, WALLET, LIGATURES } from '@/glyphs';
 
 /**
@@ -14,7 +14,7 @@ import { PUNCTUATION, WALLET, LIGATURES } from '@/glyphs';
  */
 export default [
 	// Adds a comma as a thousands separator, e.g. 1,234,567
-	newRule(smartNumberSpaces, [{ separator: PUNCTUATION.common.rightSided.comma }]),
+	newRule(smartNumberGrouping, [{ separator: PUNCTUATION.common.rightSided.comma }]),
 
 	newRule(
 		smartQuotes,

@@ -1,4 +1,4 @@
-import { newRule, smartNumberSpaces, smartQuotes } from '@/functions';
+import { newRule, smartNumberGrouping, smartQuotes } from '@/functions';
 import { PUNCTUATION, WALLET, SPACES, DASHES } from '@/glyphs';
 
 /**
@@ -17,7 +17,7 @@ import { PUNCTUATION, WALLET, SPACES, DASHES } from '@/glyphs';
 export default [
 	// Adds a non-breaking space as a thousands separator, e.g. 1 234 567
 	// Добавляет неразрывный пробел в качестве разделителя разрядов чисел
-	newRule(smartNumberSpaces, [{ separator: SPACES.noBreak }]),
+	newRule(smartNumberGrouping, [{ separator: SPACES.noBreak }]),
 
 	// 0::Разное
 	newRule(/(\d+)[\s\u00A0](%|\u2030|\u2031)/g, '$1$2'),

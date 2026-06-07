@@ -17,14 +17,14 @@ import type { NumberSpaceSettings } from '@/types';
  * @returns Text with formatted numbers containing non-breaking spaces.
  *
  * @example
- * smartNumberSpaces("Price: 1234567");
+ * smartNumberGrouping("Price: 1234567");
  * // "Price: 1 234 567"
  *
  * @example
- * smartNumberSpaces("Value: 1234567.891011", { separateFloat: true });
+ * smartNumberGrouping("Value: 1234567.891011", { separateFloat: true });
  * // "Value: 1 234 567.891 011"
  */
-export function smartNumberSpaces(
+export function smartNumberGrouping(
 	text: string,
 	{ minLength = 5, separateFloat = false, separator = SPACES.noBreak }: NumberSpaceSettings = {}
 ): string {
