@@ -26,7 +26,11 @@ import type { NumberSpaceSettings } from '@/types';
  */
 export function smartNumberSpaces(
 	text: string,
-	{ minLength = 5, separateFloat = false, spaceCharacter = SPACES.nb }: NumberSpaceSettings = {}
+	{
+		minLength = 5,
+		separateFloat = false,
+		spaceCharacter = SPACES.noBreak,
+	}: NumberSpaceSettings = {}
 ): string {
 	return text.replace(
 		/(?<![a-zA-Zа-яА-ЯёЁ\d])([+\-\u2212]?)(\d[\d\u00A0]*)([.,]\d+)?(?!\d)/g,

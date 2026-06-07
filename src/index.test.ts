@@ -8,6 +8,8 @@ import {
 	getWeightedRules,
 	resetTypographyRules,
 	applyDefaultRules,
+	rulesHas,
+	rulesCount,
 } from './index';
 import { SPACES, createCharacters, createCharacterSet } from './glyphs';
 import { PROTECTED_PATTERNS } from './helpers';
@@ -161,7 +163,7 @@ describe('smartQuotes()', () => {
 // ─────────────────────────────────────────────
 describe('smartNumberSpaces()', () => {
 	it('inserts non-breaking spaces in large integers', () => {
-		expect(smartNumberSpaces('12345')).toBe(`12${SPACES.nb}345`);
+		expect(smartNumberSpaces('12345')).toBe(`12${SPACES.noBreak}345`);
 	});
 
 	it('does not format numbers shorter than minLength', () => {
@@ -170,19 +172,19 @@ describe('smartNumberSpaces()', () => {
 	});
 
 	it('respects custom minLength', () => {
-		expect(smartNumberSpaces('1234', { minLength: 4 })).toBe(`1${SPACES.nb}234`);
+		expect(smartNumberSpaces('1234', { minLength: 4 })).toBe(`1${SPACES.noBreak}234`);
 		expect(smartNumberSpaces('123456', { minLength: 7 })).toBe('123456');
 	});
 
 	it('formats floats with separateFloat=true', () => {
 		expect(smartNumberSpaces('1000000.1234', { separateFloat: true })).toBe(
-			`1${SPACES.nb}000${SPACES.nb}000.123${SPACES.nb}4`
+			`1${SPACES.noBreak}000${SPACES.noBreak}000.123${SPACES.noBreak}4`
 		);
 	});
 
 	it('handles signed numbers', () => {
-		expect(smartNumberSpaces('+12345')).toBe(`+12${SPACES.nb}345`);
-		expect(smartNumberSpaces('-12345')).toBe(`-12${SPACES.nb}345`);
+		expect(smartNumberSpaces('+12345')).toBe(`+12${SPACES.noBreak}345`);
+		expect(smartNumberSpaces('-12345')).toBe(`-12${SPACES.noBreak}345`);
 	});
 });
 
@@ -376,5 +378,198 @@ describe('glyphs helpers', () => {
 		const deQuotes = set.get('de', 'quotes');
 		expect(Object.prototype.hasOwnProperty.call(deQuotes, 'open')).toBe(true);
 		expect(Object.prototype.hasOwnProperty.call(deQuotes, 'close')).toBe(true);
+	});
+});
+
+// ─────────────────────────────────────────────
+// glyphs — proto methods (lines 10–19)
+// ─────────────────────────────────────────────
+describe('GlyphSet proto methods', () => {
+	it('insert() mutates the set with new entries', () => {
+		const chars = createCharacters({ a: 'A' } as const);
+		chars.insert({ b: 'B', c: 'C' });
+		expect((chars as unknown as Record<string, string>)['b']).toBe('B');
+		expect((chars as unknown as Record<string, string>)['c']).toBe('C');
+	});
+
+	it('insert() does not remove existing entries', () => {
+		const chars = createCharacters({ x: 'X' } as const);
+		chars.insert({ y: 'Y' });
+		expect((chars as unknown as Record<string, string>)['x']).toBe('X');
+	});
+
+	it('hasKey() returns true for existing key', () => {
+		const chars = createCharacters({ em: '—' } as const);
+		expect(chars.hasKey('em')).toBe(true);
+	});
+
+	it('hasKey() returns false for missing key', () => {
+		const chars = createCharacters({ em: '—' } as const);
+		expect(chars.hasKey('nonexistent')).toBe(false);
+	});
+
+	it('hasKey() returns false for prototype methods (not own properties)', () => {
+		const chars = createCharacters({ a: 'A' } as const);
+		expect(chars.hasKey('join')).toBe(false);
+		expect(chars.hasKey('find')).toBe(false);
+	});
+
+	it('hasValue() returns true for existing value', () => {
+		const chars = createCharacters({ em: '—', en: '–' } as const);
+		expect(chars.hasValue('—')).toBe(true);
+		expect(chars.hasValue('–')).toBe(true);
+	});
+
+	it('hasValue() returns false for missing value', () => {
+		const chars = createCharacters({ em: '—' } as const);
+		expect(chars.hasValue('X')).toBe(false);
+	});
+
+	it('find() returns key for known value', () => {
+		const chars = createCharacters({ em: '—', en: '–' } as const);
+		expect(chars.find('—')).toBe('em');
+		expect(chars.find('–')).toBe('en');
+	});
+
+	it('find() returns undefined for unknown value', () => {
+		const chars = createCharacters({ em: '—' } as const);
+		expect(chars.find('???')).toBeUndefined();
+	});
+
+	it('find() works after insert()', () => {
+		const chars = createCharacters({ a: 'A' } as const);
+		chars.insert({ b: 'B' });
+		expect(chars.find('B')).toBe('b');
+	});
+});
+
+// ─────────────────────────────────────────────
+// glyphs — ProtoSet methods (lines 63–66)
+// ─────────────────────────────────────────────
+describe('ProtoSet methods', () => {
+	it('getList() returns all top-level keys', () => {
+		const set = createCharacterSet({
+			common: { marks: createCharacters({ dot: '.' } as const) },
+			en: { marks: createCharacters({ excl: '!' } as const) },
+			fr: { marks: createCharacters({ quest: '?' } as const) },
+		});
+		const keys = set.getList();
+		expect(keys).toContain('common');
+		expect(keys).toContain('en');
+		expect(keys).toContain('fr');
+	});
+
+	it('hasKey() returns true for existing locale', () => {
+		const set = createCharacterSet({
+			en: { marks: createCharacters({ dot: '.' } as const) },
+		});
+		expect(set.hasKey('en')).toBe(true);
+	});
+
+	it('hasKey() returns false for missing locale', () => {
+		const set = createCharacterSet({
+			en: { marks: createCharacters({ dot: '.' } as const) },
+		});
+		expect(set.hasKey('de' as never)).toBe(false);
+	});
+
+	it('hasKey() returns true for common', () => {
+		const set = createCharacterSet({
+			common: { marks: createCharacters({ dot: '.' } as const) },
+			ru: { marks: createCharacters({ excl: '!' } as const) },
+		});
+		expect(set.hasKey('common')).toBe(true);
+	});
+});
+
+// ─────────────────────────────────────────────
+// helpers — combined() (line 54–56)
+// ─────────────────────────────────────────────
+describe('PROTECTED_PATTERNS.combined()', () => {
+	it('returns a RegExp', () => {
+		const re = PROTECTED_PATTERNS.combined();
+		expect(re).toBeInstanceOf(RegExp);
+	});
+
+	it('default flags include g', () => {
+		const re = PROTECTED_PATTERNS.combined();
+		expect(re.flags).toContain('g');
+	});
+
+	it('accepts custom flags', () => {
+		const re = PROTECTED_PATTERNS.combined('gi');
+		expect(re.flags).toContain('i');
+	});
+
+	it('matches email via combined pattern', () => {
+		const re = PROTECTED_PATTERNS.combined();
+		expect('user@example.com'.match(re)).not.toBeNull();
+	});
+
+	it('matches URL via combined pattern', () => {
+		const re = PROTECTED_PATTERNS.combined();
+		expect('https://example.com'.match(re)).not.toBeNull();
+	});
+
+	it('matches multiple patterns in one pass', () => {
+		const re = PROTECTED_PATTERNS.combined('g');
+		const matches = 'email: user@example.com and url: https://example.com'.match(re);
+		expect(matches).not.toBeNull();
+		expect(matches!.length).toBeGreaterThanOrEqual(2);
+	});
+});
+
+// ─────────────────────────────────────────────
+// store — rulesHas / rulesCount (lines 91–101)
+// ─────────────────────────────────────────────
+describe('rulesHas() and rulesCount()', () => {
+	it('rulesHas() returns true for existing locale with rules', () => {
+		expect(rulesHas('common')).toBe(true);
+	});
+
+	it('rulesHas() returns false for nonexistent locale', () => {
+		expect(rulesHas('nonexistent-locale-xyz')).toBe(false);
+	});
+
+	it('rulesHas() returns true after registerRule', () => {
+		const locale = `has-test-${Date.now()}`;
+		registerRule(locale, newRule(/x/g, 'X'));
+		expect(rulesHas(locale)).toBe(true);
+	});
+
+	it('rulesCount() returns 0 for empty/nonexistent locale', () => {
+		expect(rulesCount('nonexistent-count-xyz')).toBe(0);
+	});
+
+	it('rulesCount() returns correct count after registerRule', () => {
+		const locale = `count-test-${Date.now()}`;
+		registerRule(locale, newRule(/a/g, 'A'));
+		registerRule(locale, newRule(/b/g, 'B'));
+		expect(rulesCount(locale)).toBe(2);
+	});
+
+	it('rulesCount() returns correct count for common after applyDefaultRules', () => {
+		expect(rulesCount('common')).toBeGreaterThan(0);
+	});
+});
+
+// ─────────────────────────────────────────────
+// smartQuotes — line 61: afterSpace && beforeSpace → closing
+// ─────────────────────────────────────────────
+describe('smartQuotes() — space-on-both-sides branch', () => {
+	// afterSpace=true, beforeSpace=true → ветка else → isOpen=false (closing)
+	it('treats quote surrounded by spaces on both sides as closing when stack is non-empty', () => {
+		// Открываем внешнюю кавычку, затем встречаем " с пробелами с обеих сторон
+		const result = smartQuotes('"text " more"', { outer: ['«', '»'] });
+		// Первая " → open → «
+		// Вторая " → afterSpace=false, beforeSpace=true → closing → »
+		// Третья " → afterSpace=false, beforeSpace=false → closing → на пустом стеке → outer[1]
+		expect(result).toBe('«text » more«');
+	});
+
+	it('standalone " surrounded by spaces (empty stack) opens a new quote', () => {
+		// На пустом стеке всегда open (stack.length === 0 → isOpen=true), не зависит от пробелов
+		const result = smartQuotes('" text "', { outer: ['«', '»'] });
+		expect(result).toBe('« text »');
 	});
 });

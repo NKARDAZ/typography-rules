@@ -41,19 +41,19 @@ export default [
 			`(?<!\\d\\s)([${WALLET.join()}])\\s(\\d{1,3}(?:\\d{3})*(?:,\\d+)?|\\d+(?:,\\d+)?)`,
 			'g'
 		),
-		`$2${SPACES.nb}$1`
+		`$2${SPACES.noBreak}$1`
 	),
-	newRule(new RegExp(`(\\d+)\\s([${WALLET.join()}])`, 'g'), `$1${SPACES.nb}$2`),
+	newRule(new RegExp(`(\\d+)\\s([${WALLET.join()}])`, 'g'), `$1${SPACES.noBreak}$2`),
 
 	// 1::Тире
-	newRule(new RegExp(`^(${DASHES.em})\\s`, 'gm'), `$1${SPACES.nb}`),
+	newRule(new RegExp(`^(${DASHES.em})\\s`, 'gm'), `$1${SPACES.noBreak}`),
 	newRule(
 		new RegExp(`(?<=[${PUNCTUATION.get('ru', 'rightSided').join('')}])\\s${DASHES.em}\\s`, 'g'),
-		`${SPACES.nb}${DASHES.em}${SPACES.nb}`
+		`${SPACES.noBreak}${DASHES.em}${SPACES.noBreak}`
 	),
 	newRule(
 		new RegExp(`(?<![${PUNCTUATION.get('ru', 'rightSided').join('')}])\\s${DASHES.em}\\s`, 'g'),
-		`${SPACES.nb}${DASHES.em} `
+		`${SPACES.noBreak}${DASHES.em} `
 	),
 
 	// 3::Инициалы
@@ -67,14 +67,14 @@ export default [
 	),
 
 	// 4::Союзы и прочее
-	newRule(/\s(б|бы|ж|же|ли|ль)(?![а-яА-Я])/gi, `${SPACES.nb}$1`),
+	newRule(/\s(б|бы|ж|же|ли|ль)(?![а-яА-Я])/gi, `${SPACES.noBreak}$1`),
 	newRule(
 		/\s(за|из|до|об|на|но|не|ни|то|от|по|со|или|для|над|под|при|что|если|через|после|перед|г\.|обл\.|кр\.|ст\.|пос\.|с\.|д\.|ул\.|пер\.|пр\.|пр-т\.|просп\.|пл\.|бул\.|б-р\.|наб\.|ш\.|туп\.|оф\.|кв\.|комн\.|под\.|мкр\.|уч\.|вл\.|влад\.|стр\.|корп\.|литер|эт\.|пгт\.|гл\.|рис\.|илл\.|п\.|c\.|№|§|АО|ОАО|ЗАО|ООО|ПАО)\s/gi,
-		` $1${SPACES.nb}`
+		` $1${SPACES.noBreak}`
 	),
 
 	// 5::Одиночные буквы
-	newRule(/(?<![а-яА-ЯёЁa-zA-Z])([а-яА-ЯёЁa-zA-Z])\s/g, `$1${SPACES.nb}`),
+	newRule(/(?<![а-яА-ЯёЁa-zA-Z])([а-яА-ЯёЁa-zA-Z])\s/g, `$1${SPACES.noBreak}`),
 
 	// 6::Конец абзаца
 	newRule(
@@ -82,6 +82,6 @@ export default [
 			`(?<=[а-яА-ЯёЁa-zA-Z])\\s(?=[а-яА-ЯёЁa-zA-Z]{1,12}[${PUNCTUATION.get('ru', 'rightSided').join('')}]*$)`,
 			'gm'
 		),
-		SPACES.nb
+		SPACES.noBreak
 	),
 ];

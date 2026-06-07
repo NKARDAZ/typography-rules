@@ -6,6 +6,18 @@ const proto = {
 	join(this: GlyphStringMap, joiner = '|'): string {
 		return Object.values(this).join(joiner);
 	},
+	insert(this: GlyphStringMap, entries: GlyphData): void {
+		Object.assign(this, entries);
+	},
+	hasKey(this: GlyphStringMap, key: string): boolean {
+		return Object.prototype.hasOwnProperty.call(this, key);
+	},
+	hasValue(this: GlyphStringMap, value: string): boolean {
+		return Object.values(this).includes(value);
+	},
+	find(this: GlyphStringMap, value: string): string | undefined {
+		return Object.entries(this).find(([, v]) => v === value)?.[0];
+	},
 };
 
 /**
@@ -46,6 +58,12 @@ export function createProtoSet<
 			const localeEntry = (this[dataSet] as Record<string, object>)?.[key as string] ?? {};
 
 			return createCharacters({ ...commonEntry, ...localeEntry } as GlyphData);
+		},
+		getList(this: T & ProtoSet<T>): (keyof T & string)[] {
+			return Object.keys(this) as (keyof T & string)[];
+		},
+		hasKey(this: T & ProtoSet<T>, key: keyof T & string): boolean {
+			return this.getList().includes(key);
 		},
 	};
 }
@@ -139,16 +157,16 @@ export const LIGATURES = createCharacters({
 export const DASHES = createCharacters({
 	em: '\u2014', // — Em dash
 	en: '\u2013', // – En dash
-	twm: '\u2E3A', // ⸺ Two-em dash
-	thm: '\u2E3B', // ⸻ Three-em dash
-	sh: '\u00AD', // Soft hyphen
-	fig: '\u2012', // ‒ Figure dash
-	h: '\u2010', // ‐ Hyphen
-	dh: '\u2E40', // ⹀ Double hyphen
-	nbh: '\u2011', // ‑ Non-breaking hyphen
-	hb: '\u2015', // ― Horizontal bar
-	hm: '-', // Hyphen minus
-	u: '_', // Underscore
+	twoEm: '\u2E3A', // ⸺ Two-em dash
+	threeEm: '\u2E3B', // ⸻ Three-em dash
+	softHyphen: '\u00AD', // Soft hyphen
+	figure: '\u2012', // ‒ Figure dash
+	hyphen: '\u2010', // ‐ Hyphen
+	doubleHyphen: '\u2E40', // ⹀ Double hyphen
+	noBreakHyphen: '\u2011', // ‑ Non-breaking hyphen
+	horbar: '\u2015', // ― Horizontal bar
+	hyphenMinus: '-', // Hyphen minus
+	underscore: '_', // Underscore
 } as const);
 
 /**
@@ -167,21 +185,21 @@ export const DASHES = createCharacters({
  */
 export const SPACES = createCharacters({
 	_: '\u0020', // Space
-	nb: '\u00A0', // Non-breaking space
+	noBreak: '\u00A0', // Non-breaking space
 	en: '\u2002', // En space
 	em: '\u2003', // Em space
-	tem: '\u2004', // Three-per-em
-	fem: '\u2005', // Four-per-em
-	sem: '\u2006', // Six-per-em
-	fig: '\u2007', // Figure space
-	punct: '\u2008', // Punctuation space
+	threePerEm: '\u2004', // Three-per-em
+	fourPerEm: '\u2005', // Four-per-em
+	sixPerEm: '\u2006', // Six-per-em
+	figure: '\u2007', // Figure space
+	punctuation: '\u2008', // Punctuation space
 	thin: '\u2009', // Thin space
 	hair: '\u200A', // Hair space
-	zw: '\u200B', // Zero-width
-	nnb: '\u202F', // Narrow non-breaking space
-	mm: '\u205F', // Medium mathematical space
-	id: '\u3000', // Ideographic space
-	zwnb: '\uFEFF', // Zero-width non-breaking space
+	noBreakNarrow: '\u202F', // Narrow non-breaking space
+	mediumMath: '\u205F', // Medium mathematical space
+	ideographic: '\u3000', // Ideographic space
+	zeroWidth: '\u200B', // Zero-width
+	zeroWidthNoBreak: '\uFEFF', // Zero-width non-breaking space
 } as const);
 
 /**
@@ -347,6 +365,14 @@ export const DIGITS = createCharacters({
 	seven: '7',
 	eight: '8',
 	nine: '9',
+
+	ascii_roman_capital_one: 'I',
+	ascii_roman_capital_five: 'V',
+	ascii_roman_capital_ten: 'X',
+	ascii_roman_capital_fifty: 'L',
+	ascii_roman_capital_one_hundred: 'C',
+	ascii_roman_capital_five_hundred: 'D',
+	ascii_roman_capital_one_thousand: 'M',
 
 	roman_capital_one: '\u2160',
 	roman_capital_two: '\u2161',
