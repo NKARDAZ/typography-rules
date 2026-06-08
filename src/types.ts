@@ -61,13 +61,19 @@ export type FunctionRule<
 	args: TArgs;
 };
 
+export type NodeFunctionRule = BaseRule & {
+	label: string;
+	kind: 'node';
+	rule: RegExp;
+	nodes: (match: RegExpExecArray) => Node;
+};
 /**
  * Generic typography processing function signature.
  *
  * Accepts a text input and optional additional arguments,
  * and returns a transformed string.
  */
-export type RuleFunction = (text: string, ...args: never[]) => string;
+export type RuleFunction = (text: string, ...args: never[]) => string | Node[];
 
 /**
  * Union type representing all available typography rule variants.
@@ -77,7 +83,21 @@ export type RuleFunction = (text: string, ...args: never[]) => string;
  * — RegExp-based transform rules
  * — Function-based rules
  */
-export type Rule = RegExpReplaceRule | RegExpTransformRule | FunctionRule;
+export type Rule = RegExpReplaceRule | RegExpTransformRule | FunctionRule | NodeFunctionRule;
+
+export interface TextNode {
+	type: 'text';
+	value: string;
+}
+
+export interface ElementNode {
+	type: string;
+	className?: string;
+	attrs?: Record<string, string>;
+	children: Node[];
+}
+
+export type Node = TextNode | ElementNode;
 
 // Function’s types
 
@@ -127,4 +147,20 @@ export interface ClearSpacesSettings {
 export interface runtSettings {
 	threshold?: number;
 	space?: Spaces | string;
+}
+
+export interface htmlNodeSettings {
+	expression?: RegExp;
+	nodes?: (match: RegExpExecArray) => Node;
+}
+
+export interface wrapWithTagsSettings {
+	marker?: string;
+	tag?: string;
+	wrapper?: [string, string];
+}
+
+export interface tagSettings {
+	className?: string;
+	attrs?: Record<string, string>;
 }

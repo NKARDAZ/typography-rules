@@ -1,5 +1,5 @@
 import { newRule } from '@/api';
-import { clearSpaces, runt } from '@/functions';
+import { clearSpaces, runt, wrapWithTag } from '@/functions';
 import { MATHS, DASHES, PUNCTUATION, RANGES } from '@/glyphs';
 
 const RAW = {
@@ -7,12 +7,12 @@ const RAW = {
 	interNumber: `[${MATHS.minus}${DASHES.en}]`,
 } as const;
 
-const PARTS = {
+export const PARTS = {
 	...RAW,
 	number: `([${MATHS.minus}]?${RAW.numerals})`,
 } as const;
 
-const EXPRESSIONS = {
+export const EXPRESSIONS = {
 	numeralsRange: new RegExp(`(${PARTS.numerals})-(${PARTS.numerals})`, 'g'),
 	ellipsisRange: new RegExp(`${PARTS.number}${PARTS.interNumber}${PARTS.number}`, 'g'),
 	multipleEllipsis: new RegExp(`${PUNCTUATION.common.rightSided.ellipsis}{2,}`, 'g'),
@@ -52,6 +52,15 @@ export default [
 		`$1${PUNCTUATION.common.rightSided.ellipsis}$2`
 	),
 
+	newRule('/common/wraps/sup', wrapWithTag, [
+		{ marker: '^', tag: 'sup' },
+		{ className: '@yalla-typography-sup' },
+	]),
+	newRule('/common/wraps/sub', wrapWithTag, [
+		{ marker: '_', tag: 'sub' },
+		{ className: '@yalla-typography-sub' },
+	]),
+
 	// Generic Typography
 	// Em dash replacing double hyphen
 	newRule('/common/typography/dashes', /--/g, DASHES.em),
@@ -72,5 +81,6 @@ export default [
 	// Apostrophe replacing single straight quote
 	newRule('/common/typography/apostrophe', /'/g, PUNCTUATION.common.generic.apostrophe, 200),
 
+	// Runt
 	newRule('/common/typography/runt', runt),
 ];

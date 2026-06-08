@@ -1,6 +1,11 @@
 import { newRule } from '@/api';
 import { smartNumberGrouping, smartQuotes } from '@/functions';
-import { PUNCTUATION, SPACES } from '@/glyphs';
+import { CHARACTERS, PUNCTUATION, SPACES } from '@/glyphs';
+import { PARTS } from './common';
+
+const EXPRESSIONS = {
+	numeroNumeral: new RegExp(`(${CHARACTERS.numero})\\s+(${PARTS.numerals})`, 'g'),
+};
 
 /**
  * Russian typography ruleset.
@@ -17,6 +22,7 @@ import { PUNCTUATION, SPACES } from '@/glyphs';
  */
 export default [
 	newRule('/russian/number/groups', smartNumberGrouping, [{ separator: SPACES.noBreak }]),
+	newRule('/russian/number/numero-sign', EXPRESSIONS.numeroNumeral, `$1${SPACES.noBreakNarrow}$2`),
 	newRule(
 		'/russian/typography/quotes',
 		smartQuotes,

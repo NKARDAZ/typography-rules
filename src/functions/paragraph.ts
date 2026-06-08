@@ -35,7 +35,7 @@ export function runt(
 	const protectWord = (index: number, word: string) => {
 		const protectedWord = [...word].join('\u2060');
 
-		text = text.slice(0, index) + protectedWord + text.slice(index + length);
+		text = text.slice(0, index) + protectedWord + text.slice(index + word.length);
 	};
 
 	const last = words.at(-1)!;

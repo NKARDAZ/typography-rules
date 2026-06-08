@@ -1,6 +1,11 @@
 import { newRule } from '@/api';
 import { smartNumberGrouping, smartQuotes } from '@/functions';
-import { PUNCTUATION, LIGATURES } from '@/glyphs';
+import { PUNCTUATION, LIGATURES, CHARACTERS, SPACES } from '@/glyphs';
+import { PARTS } from './common';
+
+const EXPRESSIONS = {
+	numberNumeral: new RegExp(`(${CHARACTERS.number})\\s+(${PARTS.numerals})`, 'g'),
+};
 
 /**
  * English typography ruleset.
@@ -17,6 +22,7 @@ export default [
 	newRule('/english/number/groups', smartNumberGrouping, [
 		{ separator: PUNCTUATION.common.rightSided.comma },
 	]),
+	newRule('/english/number/number-sign', EXPRESSIONS.numberNumeral, `$1${SPACES.noBreakNarrow}$2`),
 	newRule(
 		'/english/typography/quotes',
 		smartQuotes,

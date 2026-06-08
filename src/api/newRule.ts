@@ -1,5 +1,7 @@
 import type {
 	FunctionRule,
+	Node,
+	NodeFunctionRule,
 	RegExpReplaceRule,
 	RegExpTransformRule,
 	Rule,
@@ -90,4 +92,19 @@ function newRule(
 	} as RegExpTransformRule;
 }
 
-export { newRule };
+function newRuleNode(
+	label: string,
+	rule: RegExp,
+	nodes: (match: RegExpExecArray) => Node,
+	weight?: number
+): NodeFunctionRule {
+	return {
+		label,
+		kind: 'node',
+		rule,
+		nodes,
+		weight,
+	} as NodeFunctionRule;
+}
+
+export { newRule, newRuleNode };
