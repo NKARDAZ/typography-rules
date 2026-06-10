@@ -1,32 +1,8 @@
 import { newRule } from '@/api';
 import { clearSpaces, runt } from '@/functions';
-import { MATHS, DASHES, PUNCTUATION, RANGES, BRACKETS, WALLET } from '@/glyphs';
+import { MATHS, DASHES, PUNCTUATION, CHARACTERS, NONE } from '@/glyphs';
 
-const RAW = {
-	numerals: `[${RANGES.common.DIGITS.join('')}]+`,
-	interNumber: `[${MATHS.minus + DASHES.en}]`,
-	walletSymbols: `${WALLET.SYMBOL.values()
-		.map((s) => RegExp.escape(s))
-		.join('|')}`,
-	walletISO: `${WALLET.ISO.join('|')}`,
-	leftBrackets: `${RegExp.escape(BRACKETS.common.left.join(''))}`,
-	rightBrackets: `${RegExp.escape(BRACKETS.common.right.join(''))}`,
-} as const;
-
-export const PARTS = {
-	...RAW,
-	number: `([${MATHS.minus}]?${RAW.numerals})`,
-} as const;
-
-export const EXPRESSIONS = {
-	numeralsRange: new RegExp(`(${PARTS.numerals})-(${PARTS.numerals})`, 'g'),
-	ellipsisRange: new RegExp(`${PARTS.number + PARTS.interNumber + PARTS.number}`, 'g'),
-	multipleEllipsis: new RegExp(`${PUNCTUATION.common.rightSided.ellipsis}{2,}`, 'g'),
-	walletSymbolBeforeValue: new RegExp(`(${PARTS.walletSymbols})\\s*(\\d[\\d.]*)`, 'g'),
-	walletSymbolAfterValue: new RegExp(`(\\d+)\\s*(${PARTS.walletSymbols})`, 'g'),
-	walletISOBeforeValue: new RegExp(`(${PARTS.walletISO})\\s*(\\d[\\d.]*)`, 'g'),
-	walletISOAfterValue: new RegExp(`(\\d+)\\s*(${PARTS.walletISO})`, 'g'),
-} as const;
+import EXPRESSIONS from '../expressions/common';
 
 /**
  * Shared typography rules applied across all locales.
@@ -45,43 +21,54 @@ export const EXPRESSIONS = {
 export default [
 	// Whitespace cleanup
 	// newRule(/\s+/g, SPACES._),
-	newRule('/common/space/cleanup/default', clearSpaces),
-	newRule('/common/space/cleanup/trim', /^\s|\s$/g, ''),
+	newRule('/common/space/cleanup/multiple', clearSpaces),
+	newRule('/common/space/cleanup/trim', /^\s|\s$/g, NONE),
 
 	// Math
 	// Minus sign for negative numbers
 	newRule('/common/number/negative', /(?<!\d)-(\d+)/g, `${MATHS.minus}$1`),
 
 	// En dash for ranges, e.g. 1–2
-	newRule('/common/number/range/default', EXPRESSIONS.numeralsRange, `$1${DASHES.en}$2`),
+	newRule('/common/number/range/en-dash', EXPRESSIONS.numeralsRange, `$1${DASHES.en}$2`),
 
 	// Ellipsis for ranges, e.g. −2…3
 	newRule(
-		'/common/number/range/ellipsis',
+		'/common/number/range/ellipsis-on-negative',
 		EXPRESSIONS.ellipsisRange,
 		`$1${PUNCTUATION.common.rightSided.ellipsis}$2`
 	),
 
+	newRule('/common/number/dimension', /(\d+)\s*(?:x|х)\s*(\d+)/g, `$1${MATHS.multiply}$2`),
+	newRule('/common/number/multiply', /(\d+\s*)(?:\*)(\s*\d+)/g, `$1${MATHS.multiply}$2`),
+	newRule('/common/number/fraction', /(\d+)\/(\d+)/g, `$1${MATHS.fractionSlash}$2`),
+
+	newRule('/common/symbol/percent-like/value', EXPRESSIONS.percentValue, `$1$2`),
+	newRule('/common/symbol/copyright', /\((?:c|с)\)/g, CHARACTERS.copyright),
+	newRule('/common/symbol/trademark', /\((?:tm|тм)\)/g, CHARACTERS.trademark),
+	newRule('/common/symbol/registered', /\(r\)/g, CHARACTERS.registered),
+	newRule('/common/symbol/math/plus-minus', /\+-/g, MATHS.plusMinus),
+	newRule('/common/symbol/math/minus-plus', /-\+/g, MATHS.minusPlus),
+
 	// Generic Typography
 	// Em dash replacing double hyphen
-	newRule('/common/typography/dashes', /--/g, DASHES.em),
+	newRule('/common/punctuation/dashes/em-dash', /--/g, DASHES.em),
 
 	// Fix too large dots count
-	newRule('/common/typography/dots/dots-overload', /\.{4,}/g, '...'),
+	newRule('/common/punctuation/dots/overload', /\.{4,}/g, '...'),
 
 	// Ellipsis replacing three dots
-	newRule('/common/typography/dots/ellipsis', /\.\.\./g, PUNCTUATION.common.rightSided.ellipsis),
+	newRule('/common/punctuation/dots/ellipsis', /\.\.\./g, PUNCTUATION.common.rightSided.ellipsis),
 
 	// Fix multiple ellipses
 	newRule(
-		'/common/typography/dots/ellipsis-overload',
+		'/common/punctuation/dots/ellipsis-overload',
 		EXPRESSIONS.multipleEllipsis,
 		PUNCTUATION.common.rightSided.ellipsis
 	),
 
 	// Apostrophe replacing single straight quote
-	newRule('/common/typography/apostrophe', /'/g, PUNCTUATION.common.generic.apostrophe, 200),
+	newRule('/common/punctuation/apostrophe', /'/g, PUNCTUATION.common.generic.apostrophe, 200),
 
 	// Runt
-	newRule('/common/typography/runt', runt, [], Infinity),
+	newRule('/common/typography/runt', runt, undefined, Infinity),
 ];

@@ -7,52 +7,59 @@ import type {
 } from '@/types';
 
 /**
- * Creates a typography rule from RegExp or function-based logic.
+ * Creates a **replace** rule — every match is substituted with a literal string.
  *
- * Supports three rule types:
+ * The resulting rule is used in typography pipelines to transform text.
  *
- * 1. Replace rule - simple string replacement
- * 2. Transform rule - dynamic replacement via match function
- * 3. Function rule - custom rule with arguments
+ * @param label - Human-readable identifier for the rule
+ * @param rule - RegExp pattern to match against
+ * @param replacement - Literal string used as replacement for every match
+ * @param weight - Priority of the rule (higher = applied later)
  *
- * The resulting rule is later used in typography pipelines
- * to transform text based on matching patterns.
- *
- * @param rule - Rule definition:
- *  - RegExp for replace/transform rules
- *  - Function for function-based rules
- *
- * @param second - Either:
- *  - replacement string (for replace rule)
- *  - transform function (for transform rule)
- *  - arguments array (for function rule)
- *
- * @param weight - Priority of the rule (higher = applied later or earlier depending on engine)
- *
- * @returns A normalized Rule object:
- *  - `RegExpReplaceRule` if replacement string is provided
- *  - `RegExpTransformRule` if transform function is provided
- *  - `FunctionRule` if rule is a function
+ * @returns `RegExpReplaceRule`
  *
  * @example
- * // Replace rule
- * newRule(/--/g, '-');
- *
- * @example
- * // Transform rule
- * newRule(/\\d+/g, m => `[${m[0]}]`);
- *
- * @example
- * // Function rule
- * newRule(myRuleFn, ['arg1', 'arg2']);
+ * newRule('em-dash', /--/g, '-');
  */
 function newRule(label: string, rule: RegExp, replacement: string, weight?: number): Rule;
+
+/**
+ * Creates a **transform** rule — replacement is computed dynamically from the match.
+ *
+ * The resulting rule is used in typography pipelines to transform text.
+ *
+ * @param label - Human-readable identifier for the rule
+ * @param rule - RegExp pattern to match against
+ * @param transform - Callback receiving the full `RegExpExecArray`; return value replaces the matched substring
+ * @param weight - Priority of the rule (higher = applied later)
+ *
+ * @returns `RegExpTransformRule`
+ *
+ * @example
+ * newRule('wrap-digits', /\d+/g, m => `[${m[0]}]`);
+ */
 function newRule(
 	label: string,
 	rule: RegExp,
 	transform: (match: RegExpExecArray) => string,
 	weight?: number
 ): Rule;
+
+/**
+ * Creates a **function** rule — custom logic with forwarded arguments.
+ *
+ * The resulting rule is used in typography pipelines to transform text.
+ *
+ * @param label - Human-readable identifier for the rule
+ * @param rule - Custom rule function — receives `args` at call time
+ * @param args - Arguments forwarded to the rule function when applied
+ * @param weight - Priority of the rule (higher = applied later)
+ *
+ * @returns `FunctionRule`
+ *
+ * @example
+ * newRule('custom', myRuleFn, ['arg1', 'arg2']);
+ */
 function newRule(label: string, rule: RuleFunction, args?: unknown[], weight?: number): Rule;
 
 function newRule(

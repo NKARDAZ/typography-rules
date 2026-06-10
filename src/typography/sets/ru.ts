@@ -1,20 +1,8 @@
 import { newRule } from '@/api';
 import { smartNumberGrouping, smartQuotes } from '@/functions';
-import { CHARACTERS, PUNCTUATION, SPACES, WALLET } from '@/glyphs';
-import { PARTS as COMMON_PARTS, EXPRESSIONS as COMMON_EXPRESSIONS } from './common';
+import { PUNCTUATION, SPACES, WALLET } from '@/glyphs';
 
-const RAW = {
-	...COMMON_PARTS,
-};
-
-const PARTS = {
-	...RAW,
-};
-
-const EXPRESSIONS = {
-	...COMMON_EXPRESSIONS,
-	numeroNumeral: new RegExp(`(${CHARACTERS.numero})\\s+(${PARTS.numerals})`, 'g'),
-};
+import EXPRESSIONS from '../expressions/ru';
 
 /**
  * Russian typography ruleset.
@@ -35,26 +23,23 @@ export default [
 		/(\d+)\s*(?:руб(?:л[её]й|ля|\.?)|р\.?)/gi,
 		`$1${SPACES.noBreak + WALLET.SYMBOL.ruble}`
 	),
-	newRule('/english/currency/wallet-symbol-flip', EXPRESSIONS.walletSymbolBeforeValue, `$2$1`),
-	newRule('/russian/currency/wallet-iso-flip', EXPRESSIONS.walletISOBeforeValue, `$2$1`),
+	newRule('/english/currency/wallet/symbol-flip', EXPRESSIONS.walletSymbolBeforeValue, `$2$1`),
+	newRule('/russian/currency/wallet/iso-flip', EXPRESSIONS.walletISOBeforeValue, `$2$1`),
 	newRule(
-		'/russian/currency/wallet-symbol-value',
+		'/russian/currency/wallet/symbol-value',
 		EXPRESSIONS.walletSymbolAfterValue,
 		`$1${SPACES.noBreak}$2`
 	),
 	newRule(
-		'/russian/currency/wallet-iso-value',
+		'/russian/currency/wallet/iso-value',
 		EXPRESSIONS.walletISOAfterValue,
 		`$1${SPACES.noBreak}$2`
 	),
 
 	newRule('/russian/number/groups', smartNumberGrouping, [{ separator: SPACES.noBreak }]),
-	newRule('/russian/number/normalize-dot-comma', /(\d+)\.(\d+)/g, '$1,$2'),
-	newRule(
-		'/russian/number/numero-sign-value',
-		EXPRESSIONS.numeroNumeral,
-		`$1${SPACES.noBreakNarrow}$2`
-	),
+	newRule('/russian/number/normalize/dot->comma', /(\d+)\.(\d+)/g, '$1,$2'),
+
+	newRule('/russian/symbol/numero/value', EXPRESSIONS.numeroNumeral, `$1${SPACES.noBreakNarrow}$2`),
 	newRule(
 		'/russian/typography/quotes',
 		smartQuotes,
@@ -66,7 +51,7 @@ export default [
 		],
 		100
 	),
-	newRule('/russian/typography/dot-after-quote', /\.»/g, '».', 1000),
+	newRule('/russian/punctuation/dot-after-quote', /\.»/g, '».', 1000),
 	/*
 	// Adds a non-breaking space as a thousands separator, e.g. 1 234 567
 	// Добавляет неразрывный пробел в качестве разделителя разрядов чисел

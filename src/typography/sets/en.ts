@@ -1,28 +1,8 @@
 import { newRule } from '@/api';
 import { smartNumberGrouping, smartQuotes } from '@/functions';
-import { PUNCTUATION, LIGATURES, CHARACTERS, SPACES } from '@/glyphs';
-import { PARTS as COMMON_PARTS, EXPRESSIONS as COMMON_EXPRESSIONS } from './common';
+import { PUNCTUATION, LIGATURES, SPACES, NONE } from '@/glyphs';
 
-const RAW = {
-	...COMMON_PARTS,
-	leftPunctuation: `${RegExp.escape(PUNCTUATION.get('en', 'leftSided').join(''))}`,
-	rightPunctuation: `${RegExp.escape(PUNCTUATION.get('en', 'rightSided').join(''))}`,
-};
-
-const PARTS = {
-	...RAW,
-	leftChars: `${RAW.leftPunctuation + RAW.leftBrackets}`,
-	rightChars: `${RAW.rightPunctuation + RAW.rightBrackets}`,
-} as const;
-
-const EXPRESSIONS = {
-	...COMMON_EXPRESSIONS,
-	numberNumeral: new RegExp(`(${CHARACTERS.number})\\s+(${PARTS.numerals})`, 'g'),
-	invalidPunctuationSpacing: new RegExp(
-		`(?<=[${PARTS.leftChars}])\\s+|(?<!\\s)\\s(?=[${PARTS.rightChars}])`,
-		'g'
-	),
-} as const;
+import EXPRESSIONS from '../expressions/en';
 
 /**
  * English typography ruleset.
@@ -36,11 +16,11 @@ const EXPRESSIONS = {
  * Designed for Latin-script typography processing.
  */
 export default [
-	newRule('/english/currency/wallet-symbol-flip', EXPRESSIONS.walletSymbolAfterValue, `$2$1`),
-	newRule('/english/currency/wallet-iso-flip', EXPRESSIONS.walletISOBeforeValue, `$2$1`),
-	newRule('/english/currency/wallet-symbol-value', EXPRESSIONS.walletSymbolBeforeValue, `$1$2`),
+	newRule('/english/currency/wallet/symbol-flip', EXPRESSIONS.walletSymbolAfterValue, `$2$1`),
+	newRule('/english/currency/wallet/iso-flip', EXPRESSIONS.walletISOBeforeValue, `$2$1`),
+	newRule('/english/currency/wallet/symbol-value', EXPRESSIONS.walletSymbolBeforeValue, `$1$2`),
 	newRule(
-		'/english/currency/wallet-iso-value',
+		'/english/currency/wallet/iso-value',
 		EXPRESSIONS.walletISOAfterValue,
 		`$1${SPACES.noBreak}$2`
 	),
@@ -48,14 +28,11 @@ export default [
 	newRule('/english/number/groups', smartNumberGrouping, [
 		{ separator: PUNCTUATION.common.rightSided.comma },
 	]),
-	newRule(
-		'/english/number/number-sign-value',
-		EXPRESSIONS.numberNumeral,
-		`$1${SPACES.noBreakNarrow}$2`
-	),
+
+	newRule('/english/symbol/hash/value', EXPRESSIONS.numberNumeral, `$1${SPACES.noBreakNarrow}$2`),
 
 	newRule(
-		'/english/typography/quotes',
+		'/english/punctuation/quotes',
 		smartQuotes,
 		[
 			{
@@ -66,9 +43,9 @@ export default [
 		100
 	),
 	newRule(
-		'/english/typography/invalid-punctuation-spacing',
+		'/english/punctuation/invalid-spacing',
 		EXPRESSIONS.invalidPunctuationSpacing,
-		'',
+		NONE,
 		1000
 	),
 
