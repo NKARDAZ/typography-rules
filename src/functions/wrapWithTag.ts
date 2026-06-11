@@ -106,7 +106,7 @@ export function wrapWithTag(
 const TAG_OPEN = '<TAG>';
 const TAG_CLOSE = '</TAG>';
 
-function wrapWithTagExpression(
+export function wrapWithTagExpression(
 	text: string,
 	{ expression, tag = 'sup', placement }: WrapWithTagExpressionSettings,
 	tagSettings: TagSettings = {}
@@ -160,7 +160,7 @@ function wrapWithTagExpression(
  * // placement: '$1<TAG>$2</TAG>', match for /([\d\s]м)(2|3)/
  * // → [TextNode('25м'), ElementNode('sup', [TextNode('2')])]
  */
-function resolvePlacement(
+export function resolvePlacement(
 	match: RegExpExecArray,
 	placement: string,
 	tag: string,

@@ -1,6 +1,6 @@
 import { newRule } from '@/api';
-import { smartNumberGrouping, smartQuotes } from '@/functions';
-import { PUNCTUATION, LIGATURES, SPACES, NONE } from '@/glyphs';
+import { smartNumberGrouping, smartQuotes, wrapWithTag } from '@/functions';
+import { PUNCTUATION, LIGATURES, SPACES, NONE, CHARACTERS } from '@/glyphs';
 
 import EXPRESSIONS from '../expressions/en';
 
@@ -29,7 +29,36 @@ export default [
 		{ separator: PUNCTUATION.common.rightSided.comma },
 	]),
 
-	newRule('/english/symbol/hash/value', EXPRESSIONS.numberNumeral, `$1${SPACES.noBreakNarrow}$2`),
+	newRule('/english/metric/si-unit/base', EXPRESSIONS.siUnitBase, `$1${SPACES.noBreakNarrow}$2`),
+	newRule('/english/metric/si-unit/n*n-n', EXPRESSIONS.siUnitMul, `$1${CHARACTERS.middleDot}$2`),
+	newRule('/english/metric/si-unit/n-n*n', EXPRESSIONS.siUnitDiv, `$1${CHARACTERS.middleDot}$2`),
+	newRule(
+		'/english/metric/si-unit/pow-after-value',
+		wrapWithTag,
+		[
+			{
+				expression: EXPRESSIONS.siUnitPowAfterNum,
+				tag: 'sup',
+				placement: `$1${SPACES.noBreakNarrow}$2<TAG>$3</TAG>`,
+			},
+		],
+		-1
+	),
+	newRule(
+		'/english/metric/si-unit/pow',
+		wrapWithTag,
+		[
+			{
+				expression: EXPRESSIONS.siUnitPow,
+				tag: 'sup',
+				placement: `$1<TAG>$2</TAG>`,
+			},
+		],
+		-1
+	),
+	newRule('/english/scientific/temperature/value', EXPRESSIONS.temperature, `$1$2`),
+
+	newRule('/english/symbol/hash/value', EXPRESSIONS.numberNumeral, `$1$2`),
 
 	newRule(
 		'/english/punctuation/quotes',

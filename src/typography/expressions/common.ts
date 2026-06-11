@@ -1,4 +1,13 @@
-import { RANGES, MATHS, DASHES, WALLET, BRACKETS, CHARACTERS, PUNCTUATION } from '@/glyphs';
+import {
+	RANGES,
+	MATHS,
+	DASHES,
+	WALLET,
+	BRACKETS,
+	CHARACTERS,
+	PUNCTUATION,
+	TEMPERATURES,
+} from '@/glyphs';
 
 export const PARTS = {
 	numerals: '[' + RANGES.common.DIGITS.join('') + ']+',
@@ -34,6 +43,7 @@ export const PARTS = {
 } as const;
 
 export const EXPRESSIONS = {
+	sectionNumeral: new RegExp(`(${CHARACTERS.section})\\s*((?:${PARTS.numerals}\\s*)*)`, 'g'),
 	percentValue: new RegExp(`${PARTS.number}\\s+(${PARTS.percentLike})`, 'g'),
 	numeralsRange: new RegExp(`(${PARTS.numerals})-(${PARTS.numerals})`, 'g'),
 	ellipsisRange: new RegExp(`${PARTS.number + PARTS.interNumber + PARTS.number}`, 'g'),
@@ -50,6 +60,7 @@ export const EXPRESSIONS = {
 		`(?:${PUNCTUATION.common.rightSided.ellipsis}|\\.{1,})[.${PUNCTUATION.common.rightSided.ellipsis}]*\\s*(${PARTS.expressivePunctuation})`,
 		'g'
 	),
+	temperature: new RegExp(`(\\d+)\\s*(${TEMPERATURES.join()})`, 'g'),
 } as const;
 
 export default EXPRESSIONS;

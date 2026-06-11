@@ -1,6 +1,6 @@
 import { newRule } from '@/api';
 import { clearSpaces, runt } from '@/functions';
-import { MATHS, DASHES, PUNCTUATION, CHARACTERS, NONE } from '@/glyphs';
+import { MATHS, DASHES, PUNCTUATION, CHARACTERS, NONE, SPACES } from '@/glyphs';
 
 import EXPRESSIONS from '../expressions/common';
 
@@ -46,6 +46,7 @@ export default [
 	newRule('/common/symbol/copyright', /\((?:c|с)\)/g, CHARACTERS.copyright),
 	newRule('/common/symbol/trademark', /\((?:tm|тм)\)/g, CHARACTERS.trademark),
 	newRule('/common/symbol/registered', /\(r\)/g, CHARACTERS.registered),
+	newRule('/common/symbol/section', /\(s\)/g, CHARACTERS.section),
 	newRule('/common/symbol/math/plus-minus', /\+-/g, MATHS.plusMinus),
 	newRule('/common/symbol/math/minus-plus', /-\+/g, MATHS.minusPlus),
 
@@ -68,6 +69,17 @@ export default [
 
 	// Apostrophe replacing single straight quote
 	newRule('/common/punctuation/apostrophe', /'/g, PUNCTUATION.common.generic.apostrophe, 200),
+
+	newRule(
+		'/common/symbol/section/value',
+		EXPRESSIONS.sectionNumeral,
+		(match): string => {
+			const numero = match[1]!;
+			const numeral = match[2]!.replace(/\s+/g, '');
+			return `${numero}${SPACES.noBreakNarrow}${numeral}`;
+		},
+		1
+	),
 
 	// Runt
 	newRule('/common/typography/runt', runt, undefined, Infinity),

@@ -1,4 +1,4 @@
-import { CHARACTERS } from '@/glyphs';
+import { CHARACTERS, PUNCTUATION } from '@/glyphs';
 import { PARTS as COMMON_PARTS, EXPRESSIONS as COMMON_EXPRESSIONS } from './common';
 
 const SI_PREFIX = 'Й|З|Э|П|Т|Г|М|к|г|М|к|д|с|м|мк|н|п|ф|а|з|й';
@@ -21,11 +21,28 @@ const SI_OPERAND = `(?:${SI_UNIT})(?:\\^[\\d]+)?`;
 
 const PARTS = {
 	...COMMON_PARTS,
+	leftPunctuation: RegExp.escape(PUNCTUATION.get('ru', 'leftSided').join('')),
+	rightPunctuation: RegExp.escape(PUNCTUATION.get('ru', 'rightSided').join('')),
+
+	get leftChars(): string {
+		const value = PARTS.leftPunctuation + PARTS.leftBrackets;
+		Object.defineProperty(this, 'leftChars', { value, enumerable: true, configurable: false });
+		return value;
+	},
+	get rightChars(): string {
+		const value = PARTS.rightPunctuation + PARTS.rightBrackets;
+		Object.defineProperty(this, 'rightChars', { value, enumerable: true, configurable: false });
+		return value;
+	},
 } as const;
 
 const EXPRESSIONS = {
 	...COMMON_EXPRESSIONS,
-	numeroNumeral: new RegExp(`(${CHARACTERS.numero})\\s+(${PARTS.numerals})`, 'g'),
+	numeroNumeral: new RegExp(`(${CHARACTERS.numero})\\s*((?:${PARTS.numerals}\\s*)*)`, 'g'),
+	invalidPunctuationSpacing: new RegExp(
+		`(?<=[${PARTS.leftChars}])\\s+|(?<!\\s)\\s(?=[${PARTS.rightChars}])`,
+		'g'
+	),
 	siUnitMul: new RegExp(`(${SI_OPERAND})\\*(${SI_OPERAND}(?:\\/${SI_OPERAND})*)`, 'g'),
 	siUnitDiv: new RegExp(`(${SI_OPERAND}(?:\\/${SI_OPERAND})*)\\*(${SI_OPERAND})`, 'g'),
 	siUnitBase: new RegExp(`(\\d+)\\s*(${SI_UNIT})(?![/*])`, 'g'),

@@ -1,6 +1,6 @@
 import { newRule } from '@/api';
 import { smartNumberGrouping, smartQuotes, wrapWithTag } from '@/functions';
-import { CHARACTERS, PUNCTUATION, SPACES, WALLET } from '@/glyphs';
+import { CHARACTERS, NONE, PUNCTUATION, SPACES, WALLET } from '@/glyphs';
 
 import EXPRESSIONS from '../expressions/ru';
 
@@ -18,11 +18,6 @@ import EXPRESSIONS from '../expressions/ru';
  * Designed for Script=Cyrillic text normalization.
  */
 export default [
-	newRule(
-		'/russian/currency/rub-to-symbol',
-		/(\d+)\s*(?:руб(?:л[её]й|ля|\.?)|р\.?)/gi,
-		`$1${SPACES.noBreak + WALLET.SYMBOL.ruble}`
-	),
 	newRule('/english/currency/wallet/symbol-flip', EXPRESSIONS.walletSymbolBeforeValue, `$2$1`),
 	newRule('/russian/currency/wallet/iso-flip', EXPRESSIONS.walletISOBeforeValue, `$2$1`),
 	newRule(
@@ -34,6 +29,21 @@ export default [
 		'/russian/currency/wallet/iso-value',
 		EXPRESSIONS.walletISOAfterValue,
 		`$1${SPACES.noBreak}$2`
+	),
+	newRule(
+		'/russian/currency/rub-to-symbol',
+		/(\d+)\s*(?:рублей|рубля|рубль|руб\.?)(?!\p{L})/giu,
+		`$1${SPACES.noBreak + WALLET.SYMBOL.ruble}`
+	),
+	newRule(
+		'/russian/currency/eur-to-symbol',
+		/(\d+)\s*(?:евро)(?!\p{L})/giu,
+		`$1${SPACES.noBreak + WALLET.SYMBOL.euro}`
+	),
+	newRule(
+		'/russian/currency/usd-to-symbol',
+		/(\d+)\s*(?:долларов|доллар|дол\.?)(?!\p{L})/giu,
+		`$1${SPACES.noBreak + WALLET.SYMBOL.dollar}`
 	),
 
 	newRule('/russian/number/groups', smartNumberGrouping, [{ separator: SPACES.noBreak }]),
@@ -66,8 +76,18 @@ export default [
 		],
 		-1
 	),
+	newRule(
+		'/russian/scientific/temperature/value',
+		EXPRESSIONS.temperature,
+		`$1${SPACES.noBreak}$2`
+	),
 
-	newRule('/russian/symbol/numero/value', EXPRESSIONS.numeroNumeral, `$1${SPACES.noBreakNarrow}$2`),
+	newRule('/russian/symbol/numero/value', EXPRESSIONS.numeroNumeral, (match): string => {
+		const numero = match[1]!;
+		const numeral = match[2]!.replace(/\s+/g, '');
+		return `${numero}${SPACES.noBreakNarrow}${numeral}`;
+	}),
+
 	newRule(
 		'/russian/punctuation/quotes',
 		smartQuotes,
@@ -86,18 +106,22 @@ export default [
 		'$1..'
 	),
 	newRule('/russian/punctuation/dot-after-expression', EXPRESSIONS.expressiveAposiopesis, '$1..'),
+	newRule(
+		'/russian/punctuation/invalid-spacing',
+		EXPRESSIONS.invalidPunctuationSpacing,
+		NONE,
+		1000
+	),
 
 	newRule(
-		'/russian/compositions/initials/1',
+		'/russian/compositions/initials',
 		/([а-яёА-ЯЁ]\.)[\s]([а-яёА-ЯЁ]\.)[\s]([а-яёА-ЯЁ][а-яёА-ЯЁ]+)/g,
-		`$1${SPACES.thin}$2${SPACES.thin}$3`,
-		-1
+		`$1${SPACES.thin}$2${SPACES.thin}$3`
 	),
 	newRule(
 		'/russian/compositions/initials',
 		/([а-яёА-ЯЁ][а-яёА-ЯЁ]+)[\s]([а-яёА-ЯЁ}]\.)[\s]([а-яёА-ЯЁ]\.)/g,
-		`$1${SPACES.thin}$2${SPACES.thin}$3`,
-		-1
+		`$1${SPACES.thin}$2${SPACES.thin}$3`
 	),
 
 	/*

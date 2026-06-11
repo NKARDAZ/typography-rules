@@ -1,4 +1,5 @@
-import type { PatternProto, PatternData, PatternSet } from './types';
+import { ALIAS } from '@/typography/aliases';
+import type { PatternProto, PatternData, PatternSet, LocalePatterns } from './types';
 
 export type * from './types';
 
@@ -50,24 +51,45 @@ const patternProto: PatternProto = {
 			.filter((v): v is RegExp => v !== undefined);
 	},
 
-	combined(flags = 'g'): RegExp {
-		const source = this.values.map((pattern) => `(${pattern.source})`).join('|');
+	combined(locale?: string): RegExp {
+		const key = locale ? (ALIAS.resolve(locale) ?? locale) : undefined;
+		const baseSources = this.values.map((p) => `(${p.source})`);
 
-		return new RegExp(source, flags);
+		const localeSources: string[] = [];
+		const locales = localeRegistry.get(this);
+		if (key && locales) {
+			const sub = locales.get(key);
+			if (sub) {
+				for (const rx of Object.values(sub)) {
+					localeSources.push(`(${rx.source})`);
+				}
+			}
+		}
+
+		const source = [...baseSources, ...localeSources].join('|');
+		return new RegExp(source, 'g');
 	},
 
 	insert(patterns: PatternData): void {
-		for (const key of Object.keys(patterns)) {
-			const src = patterns[key]!.source;
-			const flags = patterns[key]!.flags;
+		const locales = localeRegistry.get(this) ?? new Map<string, PatternData>();
 
-			Object.defineProperty(this, key, {
-				get(): RegExp {
-					return new RegExp(src, flags);
-				},
-				enumerable: true,
-				configurable: true,
-			});
+		for (const key of Object.keys(patterns)) {
+			const value = patterns[key]!;
+
+			if (value instanceof RegExp) {
+				const src = value.source;
+				const flags = value.flags;
+				Object.defineProperty(this, key, {
+					get(): RegExp {
+						return new RegExp(src, flags);
+					},
+					enumerable: true,
+					configurable: true,
+				});
+			} else {
+				locales.set(key, value as LocalePatterns);
+				localeRegistry.set(this, locales);
+			}
 		}
 	},
 
@@ -105,21 +127,33 @@ const patternProto: PatternProto = {
  */
 export function createPatterns<T extends PatternData>(patterns: T): PatternSet<T> {
 	const result = Object.create(patternProto) as PatternSet<T>;
+	const locales = new Map<string, PatternData>();
 
 	for (const key of Object.keys(patterns) as (keyof T & string)[]) {
-		const src = patterns[key]!.source;
-		const flags = patterns[key]!.flags;
-		Object.defineProperty(result, key, {
-			get(): RegExp {
-				return new RegExp(src, flags);
-			},
-			enumerable: true,
-			configurable: true,
-		});
+		const value = patterns[key]!;
+
+		if (value instanceof RegExp) {
+			// базовый паттерн — геттер как раньше
+			const src = value.source;
+			const flags = value.flags;
+			Object.defineProperty(result, key, {
+				get(): RegExp {
+					return new RegExp(src, flags);
+				},
+				enumerable: true,
+				configurable: true,
+			});
+		} else {
+			// под-словарь локали — сохраняем в реестр, не трогаем result
+			locales.set(key, value as LocalePatterns);
+		}
 	}
 
+	localeRegistry.set(result, locales);
 	return result;
 }
+
+const localeRegistry = new WeakMap<object, Map<string, PatternData>>();
 
 /**
  * Registry of protected regex patterns used in text preprocessing.
@@ -154,11 +188,13 @@ export const PROTECTED_PATTERNS = createPatterns({
 	mac: /\b(?:[0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}\b/g,
 	version: /\bv?\d+\.\d+\.\d+(?:[-+][A-Za-z0-9.-]+)?\b/g,
 	selector: /[.#][A-Za-z_][\w-]*/g,
-	cliOption: /--?[a-zA-Z][\w-]*/g, //
+	cliOption: /--?[a-zA-Z][\w-]*/g,
+	hashNumber: /(?<!\w)#[0-9]+\b/g,
 	isbn: /\b(?:97[89][- ]?)?(?:\d[- ]?){9}[\dX]\b/g,
 	issn: /\b\d{4}-\d{3}[\dX]\b/g,
 	doi: /\b10\.\d{4,9}\/[-._;()/:A-Z0-9]+\b/gi,
 	orcid: /\b\d{4}-\d{4}-\d{4}-\d{3}[\dX]\b/g,
+	['ru']: {},
 });
 
 /**
@@ -167,7 +203,8 @@ export const PROTECTED_PATTERNS = createPatterns({
  *
  * @returns Tuple of [protected text, captured matches]
  */
-export function protect(text: string): [string, string[]] {
+export function protect(text: string, locale?: string): [string, string[]] {
+	const key = locale ? (ALIAS.resolve(locale) ?? locale) : undefined;
 	const captured: string[] = [];
 
 	const withNodeMarkers = text.replace(NODE_MARKER_REGEX, (match) => {
@@ -175,7 +212,7 @@ export function protect(text: string): [string, string[]] {
 		return PROTECTION_MARKER;
 	});
 
-	const withPatterns = withNodeMarkers.replace(PROTECTED_PATTERNS.combined(), (match) => {
+	const withPatterns = withNodeMarkers.replace(PROTECTED_PATTERNS.combined(key), (match) => {
 		captured.push(match);
 		return PROTECTION_MARKER;
 	});
