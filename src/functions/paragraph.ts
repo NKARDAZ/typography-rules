@@ -3,8 +3,10 @@ import type { RuntSettings } from '@/types';
 
 export function runt(
 	text: string,
-	{ threshold = 10, space = SPACES.noBreak }: RuntSettings = {}
+	{ threshold = 10, space = SPACES.noBreak, minLineLength = 75 * 2 }: RuntSettings = {}
 ): string {
+	if (text.length < minLineLength) return text;
+
 	const segmenter = new Intl.Segmenter(undefined, {
 		granularity: 'word',
 	});

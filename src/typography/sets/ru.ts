@@ -15,7 +15,7 @@ import EXPRESSIONS from '../expressions/ru';
  * - abbreviation spacing rules
  * - grammatical particle spacing rules
  *
- * Designed for Cyrillic text normalization.
+ * Designed for Script=Cyrillic text normalization.
  */
 export default [
 	newRule(
@@ -86,6 +86,20 @@ export default [
 		'$1..'
 	),
 	newRule('/russian/punctuation/dot-after-expression', EXPRESSIONS.expressiveAposiopesis, '$1..'),
+
+	newRule(
+		'/russian/compositions/initials/1',
+		/([а-яёА-ЯЁ]\.)[\s]([а-яёА-ЯЁ]\.)[\s]([а-яёА-ЯЁ][а-яёА-ЯЁ]+)/g,
+		`$1${SPACES.thin}$2${SPACES.thin}$3`,
+		-1
+	),
+	newRule(
+		'/russian/compositions/initials',
+		/([а-яёА-ЯЁ][а-яёА-ЯЁ]+)[\s]([а-яёА-ЯЁ}]\.)[\s]([а-яёА-ЯЁ]\.)/g,
+		`$1${SPACES.thin}$2${SPACES.thin}$3`,
+		-1
+	),
+
 	/*
 	// Adds a non-breaking space as a thousands separator, e.g. 1 234 567
 	// Добавляет неразрывный пробел в качестве разделителя разрядов чисел
@@ -122,11 +136,11 @@ export default [
 
 	// 3::Инициалы
 	newRule(
-		/([A-ZА-ЯЁ]\.)[\s]([A-ZА-ЯЁ]\.)[\s]([A-ZА-ЯЁ][a-zа-яё]+)/g,
+		/([а-яёА-ЯЁ]\.)[\s]([а-яёА-ЯЁ]\.)[\s]([а-яёА-ЯЁ][а-яёА-ЯЁ]+)/g,
 		`$1${SPACES.thin}$2${SPACES.thin}$3`
 	),
 	newRule(
-		/([A-ZА-ЯЁ][a-zа-яё]+)[\s]([A-ZА-ЯЁ]\.)[\s]([A-ZА-ЯЁ]\.)/g,
+		/([а-яёА-ЯЁ][а-яёА-ЯЁ]+)[\s]([а-яёА-ЯЁ}]\.)[\s]([а-яёА-ЯЁ]\.)/g,
 		`$1${SPACES.thin}$2${SPACES.thin}$3`
 	),
 

@@ -176,6 +176,7 @@ export interface ClearSpacesSettings {
 export interface RuntSettings {
 	threshold?: number;
 	space?: Spaces | string;
+	minLineLength?: number;
 }
 
 /**
