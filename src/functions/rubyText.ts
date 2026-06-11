@@ -91,16 +91,19 @@ export function rubyText(
 		for (let k = 0; k < baseParts.length; k++) {
 			children.push({
 				type: 'rb',
+				data: { skipTypography: true },
 				children: [{ type: 'text', value: baseParts[k] ?? '' }],
 			});
 			children.push({
 				type: 'rt',
+				data: { skipTypography: true },
 				children: [{ type: 'text', value: furiganaParts[k] ?? '' }],
 			});
 		}
 
 		result.push({
 			type: 'ruby',
+			data: { skipTypography: true },
 			...(className && { className }),
 			...(attrs && { attrs }),
 			children,

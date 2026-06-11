@@ -25,9 +25,7 @@ export default [
 		`$1${SPACES.noBreak}$2`
 	),
 
-	newRule('/english/number/groups', smartNumberGrouping, [
-		{ separator: PUNCTUATION.common.rightSided.comma },
-	]),
+	newRule('/english/number/groups', smartNumberGrouping, [{ locale: 'en-US' }]),
 
 	newRule('/english/metric/si-unit/base', EXPRESSIONS.siUnitBase, `$1${SPACES.noBreakNarrow}$2`),
 	newRule('/english/metric/si-unit/n*n-n', EXPRESSIONS.siUnitMul, `$1${CHARACTERS.middleDot}$2`),
@@ -58,6 +56,7 @@ export default [
 	),
 	newRule('/english/scientific/temperature/value', EXPRESSIONS.temperature, `$1$2`),
 
+	newRule('/english/symbol/percent-like/value', EXPRESSIONS.percentValue, `$1$2`),
 	newRule('/english/symbol/hash/value', EXPRESSIONS.numberNumeral, `$1$2`),
 
 	newRule(

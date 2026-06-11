@@ -74,20 +74,20 @@ function textNode(value: string): Node {
 }
 
 function mnNode(value: string): Node {
-	return { type: 'mn', children: [textNode(value)] };
+	return { type: 'mn', data: { skipTypography: true }, children: [textNode(value)] };
 }
 
 function buildMmultiscripts({ base, supL, subL, supR, subR }: ScriptPositions): Node {
-	const baseNode: Node = { type: 'mi', children: [textNode(base)] };
+	const baseNode: Node = { type: 'mi', data: { skipTypography: true }, children: [textNode(base)] };
 
 	const children: Node[] = [baseNode, mnNode(subR), mnNode(supR)];
 
 	if (subL || supL) {
-		children.push({ type: 'mprescripts', children: [] });
+		children.push({ type: 'mprescripts', data: { skipTypography: true }, children: [] });
 		children.push(mnNode(subL), mnNode(supL));
 	}
 
-	return { type: 'mmultiscripts', children };
+	return { type: 'mmultiscripts', data: { skipTypography: true }, children };
 }
 
 /**
@@ -148,6 +148,7 @@ export function chemNotation(
 
 		result.push({
 			type: 'math',
+			data: { skipTypography: true },
 			...(className && { className }),
 			...(attrs && { attrs }),
 			children: parsed.map(buildMmultiscripts),

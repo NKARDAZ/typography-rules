@@ -121,6 +121,7 @@ export interface ElementNode {
 	className?: string;
 	attrs?: Record<string, string>;
 	children: Node[];
+	data?: Record<string, boolean | string | number>;
 }
 
 /**
@@ -154,8 +155,6 @@ export interface QuoteSettings {
  */
 export interface NumberSpaceSettings {
 	minLength?: number;
-	separateFloat?: boolean;
-	separator?: Spaces | string;
 }
 
 /**
@@ -172,6 +171,7 @@ export interface ClearSpacesSettings {
  *
  * @property threshold - Threshold value for runt detection
  * @property space - Space character used for runt replacement
+ * @property minLineLength - Minimum line length for runt detection
  */
 export interface RuntSettings {
 	threshold?: number;

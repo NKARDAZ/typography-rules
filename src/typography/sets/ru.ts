@@ -32,7 +32,7 @@ export default [
 	),
 	newRule(
 		'/russian/currency/rub-to-symbol',
-		/(\d+)\s*(?:рублей|рубля|рубль|руб\.?)(?!\p{L})/giu,
+		/(\d+)\s*(?:рублей|рубля|рубль|руб\.?|р\.?)(?!\p{L})/giu,
 		`$1${SPACES.noBreak + WALLET.SYMBOL.ruble}`
 	),
 	newRule(
@@ -46,7 +46,7 @@ export default [
 		`$1${SPACES.noBreak + WALLET.SYMBOL.dollar}`
 	),
 
-	newRule('/russian/number/groups', smartNumberGrouping, [{ separator: SPACES.noBreak }]),
+	newRule('/russian/number/groups', smartNumberGrouping, [{ locale: 'ru-RU' }]),
 	newRule('/russian/number/normalize/dot->comma', /(\d+)\.(\d+)/g, '$1,$2'),
 
 	newRule('/russian/metric/si-unit/base', EXPRESSIONS.siUnitBase, `$1${SPACES.noBreakNarrow}$2`),
@@ -82,6 +82,7 @@ export default [
 		`$1${SPACES.noBreak}$2`
 	),
 
+	newRule('/russian/symbol/percent-like/value', EXPRESSIONS.percentValue, `$1${SPACES.noBreak}$2`),
 	newRule('/russian/symbol/numero/value', EXPRESSIONS.numeroNumeral, (match): string => {
 		const numero = match[1]!;
 		const numeral = match[2]!.replace(/\s+/g, '');

@@ -42,7 +42,6 @@ export default [
 	newRule('/common/number/multiply', /(\d+\s*)(?:\*)(\s*\d+)/g, `$1${MATHS.multiply}$2`),
 	newRule('/common/number/fraction', /(\d+)\/(\d+)/g, `$1${MATHS.fractionSlash}$2`),
 
-	newRule('/common/symbol/percent-like/value', EXPRESSIONS.percentValue, `$1$2`),
 	newRule('/common/symbol/copyright', /\((?:c|с)\)/g, CHARACTERS.copyright),
 	newRule('/common/symbol/trademark', /\((?:tm|тм)\)/g, CHARACTERS.trademark),
 	newRule('/common/symbol/registered', /\(r\)/g, CHARACTERS.registered),

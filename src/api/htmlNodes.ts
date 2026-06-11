@@ -116,5 +116,6 @@ export function nodeToMdast(n: Node): Text | MdxJsxTextElement {
 		name: element.type,
 		attributes,
 		children: element.children.map(nodeToMdast),
+		data: element.data,
 	} as MdxJsxTextElement;
 }

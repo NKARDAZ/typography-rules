@@ -192,8 +192,9 @@ export const PROTECTED_PATTERNS = createPatterns({
 	hashNumber: /(?<!\w)#[0-9]+\b/g,
 	isbn: /\b(?:97[89][- ]?)?(?:\d[- ]?){9}[\dX]\b/g,
 	issn: /\b\d{4}-\d{3}[\dX]\b/g,
-	doi: /\b10\.\d{4,9}\/[-._;()/:A-Z0-9]+\b/gi,
+	doi: /\b10\.\d{4,9}\/[-._;()/:A-Za-z0-9]+\b/g,
 	orcid: /\b\d{4}-\d{4}-\d{4}-\d{3}[\dX]\b/g,
+	protect: /\[##\((.+)\)##\]/g,
 	['ru']: {},
 });
 
@@ -225,7 +226,9 @@ export function protect(text: string, locale?: string): [string, string[]] {
  */
 export function unprotect(text: string, captured: string[]): string {
 	const queue = [...captured];
-	return text.replace(PROTECTION_MARKER_REGEX, () => queue.shift() ?? '');
+	return text
+		.replace(PROTECTION_MARKER_REGEX, () => queue.shift() ?? '')
+		.replace(PROTECTED_PATTERNS.protect, '$1');
 }
 
 /**

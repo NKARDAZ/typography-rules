@@ -44,7 +44,7 @@ export const PARTS = {
 
 export const EXPRESSIONS = {
 	sectionNumeral: new RegExp(`(${CHARACTERS.section})\\s*((?:${PARTS.numerals}\\s*)*)`, 'g'),
-	percentValue: new RegExp(`${PARTS.number}\\s+(${PARTS.percentLike})`, 'g'),
+	percentValue: new RegExp(`${PARTS.number}\\s*(${PARTS.percentLike})`, 'g'),
 	numeralsRange: new RegExp(`(${PARTS.numerals})-(${PARTS.numerals})`, 'g'),
 	ellipsisRange: new RegExp(`${PARTS.number + PARTS.interNumber + PARTS.number}`, 'g'),
 	multipleEllipsis: new RegExp(`${PUNCTUATION.common.rightSided.ellipsis}{2,}`, 'g'),

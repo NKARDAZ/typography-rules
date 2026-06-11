@@ -90,6 +90,7 @@ export function wrapWithTag(
 
 		result.push({
 			type: tag,
+			data: { skipTypography: true },
 			...(tagSettings.className && { className: tagSettings.className }),
 			...(tagSettings.attrs && { attrs: tagSettings.attrs }),
 			children: wrapWithTag(text.slice(start + 2, end)),
@@ -134,6 +135,7 @@ export function wrapWithTagExpression(
 		} else {
 			result.push({
 				type: tag,
+				data: { skipTypography: true },
 				...(tagSettings.className && { className: tagSettings.className }),
 				...(tagSettings.attrs && { attrs: tagSettings.attrs }),
 				children: [{ type: 'text', value: match[0] }],
@@ -183,6 +185,7 @@ export function resolvePlacement(
 
 	nodes.push({
 		type: tag,
+		data: { skipTypography: true },
 		...(tagSettings.className && { className: tagSettings.className }),
 		...(tagSettings.attrs && { attrs: tagSettings.attrs }),
 		children: [{ type: 'text', value: resolved.slice(tagOpenIdx + TAG_OPEN.length, tagCloseIdx) }],
