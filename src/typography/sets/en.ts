@@ -1,8 +1,10 @@
 import { newRule } from '@/api';
 import { smartNumberGrouping, smartQuotes, wrapWithTag } from '@/functions';
-import { PUNCTUATION, LIGATURES, SPACES, NONE, CHARACTERS } from '@/glyphs';
+import { PUNCTUATION, LIGATURES, SPACES, NONE, CHARACTERS, MATHS } from '@/glyphs';
 
 import EXPRESSIONS from '../expressions/en';
+
+const locale = 'en-US';
 
 /**
  * English typography ruleset.
@@ -25,7 +27,7 @@ export default [
 		`$1${SPACES.noBreak}$2`
 	),
 
-	newRule('/english/number/groups', smartNumberGrouping, [{ locale: 'en-US' }]),
+	newRule('/english/number/groups', smartNumberGrouping, [{ locale }]),
 
 	newRule('/english/metric/si-unit/base', EXPRESSIONS.siUnitBase, `$1${SPACES.noBreakNarrow}$2`),
 	newRule('/english/metric/si-unit/n*n-n', EXPRESSIONS.siUnitMul, `$1${CHARACTERS.middleDot}$2`),
@@ -58,6 +60,12 @@ export default [
 
 	newRule('/english/symbol/percent-like/value', EXPRESSIONS.percentValue, `$1$2`),
 	newRule('/english/symbol/hash/value', EXPRESSIONS.numberNumeral, `$1$2`),
+	newRule('/english/number/division', /(\d+\s*)(?:\/)(\s*\d+)/g, `$1${MATHS.obelus}$2`),
+	newRule(
+		'/english/number/division-times',
+		/(\d+\s*)(?:\/\*)(\s*\d+)/g,
+		`$1${MATHS.divisionTimes}$2`
+	),
 
 	newRule(
 		'/english/punctuation/quotes',

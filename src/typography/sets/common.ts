@@ -46,8 +46,8 @@ export default [
 	newRule('/common/symbol/trademark', /\((?:tm|тм)\)/g, CHARACTERS.trademark),
 	newRule('/common/symbol/registered', /\(r\)/g, CHARACTERS.registered),
 	newRule('/common/symbol/section', /\(s\)/g, CHARACTERS.section),
-	newRule('/common/symbol/math/plus-minus', /\+-/g, MATHS.plusMinus),
-	newRule('/common/symbol/math/minus-plus', /-\+/g, MATHS.minusPlus),
+	newRule('/common/symbol/math/plus-minus', EXPRESSIONS.plusMinus, MATHS.plusMinus),
+	newRule('/common/symbol/math/minus-plus', EXPRESSIONS.minusPlus, MATHS.minusPlus),
 
 	// Generic Typography
 	// Em dash replacing double hyphen

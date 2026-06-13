@@ -43,6 +43,8 @@ export const PARTS = {
 } as const;
 
 export const EXPRESSIONS = {
+	plusMinus: new RegExp(`(\\+[-${MATHS.minus}])`, 'g'),
+	minusPlus: new RegExp(`([-${MATHS.minus}]\\+)`, 'g'),
 	sectionNumeral: new RegExp(`(${CHARACTERS.section})\\s*((?:${PARTS.numerals}\\s*)*)`, 'g'),
 	percentValue: new RegExp(`${PARTS.number}\\s*(${PARTS.percentLike})`, 'g'),
 	numeralsRange: new RegExp(`(${PARTS.numerals})-(${PARTS.numerals})`, 'g'),

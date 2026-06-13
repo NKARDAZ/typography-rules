@@ -280,6 +280,8 @@ export const MATHS = createCharacters({
 	plusMinus: '\u00B1', // ±
 	minusPlus: '\u2213', // ∓
 	multiply: '\u00D7', // ×
+	obelus: '\u00F7', // ÷
+	divisionTimes: '\u22C7', // ⋇
 	fractionSlash: '\u2044', // ⁄
 } as const);
 

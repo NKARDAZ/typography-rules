@@ -162,13 +162,13 @@ const localeRegistry = new WeakMap<object, Map<string, PatternData>>();
  * by wrapping matches with protection markers.
  *
  * Includes:
- * — URLs and emails
- * — filesystem paths (Unix / Windows)
- * — code blocks and inline code
- * — identifiers (UUID, hashes, ORCID, DOI)
- * — network addresses (IPv4, IPv6, MAC)
- * — programming-related syntax (selectors, CLI flags, versions)
- * — publishing identifiers (ISBN, ISSN)
+ * - URLs and emails
+ * - filesystem paths (Unix / Windows)
+ * - code blocks and inline code
+ * - identifiers (UUID, hashes, ORCID, DOI)
+ * - network addresses (IPv4, IPv6, MAC)
+ * - programming-related syntax (selectors, CLI flags, versions)
+ * - publishing identifiers (ISBN, ISSN)
  *
  * This system ensures that structured technical content
  * is not corrupted by typographic transformations.
