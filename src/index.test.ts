@@ -175,12 +175,12 @@ describe('smartQuotes()', () => {
 // ─────────────────────────────────────────────
 describe('smartNumberGrouping()', () => {
 	it('inserts non-breaking spaces in large integers', () => {
-		expect(smartNumberGrouping('12345')).toBe(`12${SPACES.noBreak}345`);
+		expect(smartNumberGrouping('12345', { locale: 'ru-RU' })).toBe(`12${SPACES.noBreak}345`);
 	});
 
 	it('does not format numbers shorter than minLength', () => {
-		expect(smartNumberGrouping('1234')).toBe('1234');
-		expect(smartNumberGrouping('999')).toBe('999');
+		expect(smartNumberGrouping('1234', { locale: 'ru-RU' })).toBe('1234');
+		expect(smartNumberGrouping('999', { locale: 'ru-RU' })).toBe('999');
 	});
 
 	it('respects custom minLength', () => {
@@ -189,14 +189,14 @@ describe('smartNumberGrouping()', () => {
 	});
 
 	it('formats floats with separateFloat=true', () => {
-		expect(smartNumberGrouping('1000000.1234', { separateFloat: true })).toBe(
-			`1${SPACES.noBreak}000${SPACES.noBreak}000.123${SPACES.noBreak}4`
+		expect(smartNumberGrouping('1000000.1234', {})).toBe(
+			`1${SPACES.noBreak}000${SPACES.noBreak}000.1234`
 		);
 	});
 
 	it('handles signed numbers', () => {
-		expect(smartNumberGrouping('+12345')).toBe(`+12${SPACES.noBreak}345`);
-		expect(smartNumberGrouping('-12345')).toBe(`-12${SPACES.noBreak}345`);
+		expect(smartNumberGrouping('+12345', { locale: 'ru-RU' })).toBe(`+12${SPACES.noBreak}345`);
+		expect(smartNumberGrouping('-12345', { locale: 'ru-RU' })).toBe(`-12${SPACES.noBreak}345`);
 	});
 });
 

@@ -1,19 +1,19 @@
-# @yalla/typography-rules
+# @nkardaz/typography-rules
 
 A modular, locale-aware typography rules engine for transforming plain text into
 typographically correct output. Ships with a glyph registry, smart text
 functions, and a composable rule pipeline.
 
 Used as a rules provider for typography plugins such as
-[@yalla/typography-core](https://github.com/DemerNkardaz/typography-core) /
-[@yalla/remark-typography](https://github.com/DemerNkardaz/remark-typography).
+[@nkardaz/typography-core](https://github.com/DemerNkardaz/typography-core) /
+[@nkardaz/remark-typography](https://github.com/DemerNkardaz/remark-typography).
 
 ---
 
 ## Installation
 
 ```bash
-npm i @yalla/typography-rules
+npm i @nkardaz/typography-rules
 ```
 
 > **Requires Node.js ≥ 24.0.0**
@@ -24,10 +24,10 @@ npm i @yalla/typography-rules
 
 | Export path                         | Description                                                               |
 | ----------------------------------- | ------------------------------------------------------------------------- |
-| `@yalla/typography-rules`           | Main entry — rules, store, types, functions                               |
-| `@yalla/typography-rules/glyphs`    | Glyph registries (DASHES, SPACES, PUNCTUATION, …)                         |
-| `@yalla/typography-rules/helpers`   | Text pipeline helpers (protect/unprotect, node markers, pattern registry) |
-| `@yalla/typography-rules/functions` | Composable text-processing functions                                      |
+| `@nkardaz/typography-rules`           | Main entry — rules, store, types, functions                               |
+| `@nkardaz/typography-rules/glyphs`    | Glyph registries (DASHES, SPACES, PUNCTUATION, …)                         |
+| `@nkardaz/typography-rules/helpers`   | Text pipeline helpers (protect/unprotect, node markers, pattern registry) |
+| `@nkardaz/typography-rules/functions` | Composable text-processing functions                                      |
 
 ---
 
@@ -36,7 +36,7 @@ npm i @yalla/typography-rules
 ### Using default rules
 
 ```typescript
-import { initTypographyRules, getWeightedRules } from '@yalla/typography-rules';
+import { initTypographyRules, getWeightedRules } from '@nkardaz/typography-rules';
 
 // Register all built-in rule groups (common, ru, en, …)
 initTypographyRules();
@@ -54,7 +54,7 @@ const rules = getWeightedRules('ru'); // common + ru rules, sorted by weight
 ### Defining custom rules
 
 ```typescript
-import { newRule, registerRule } from '@yalla/typography-rules';
+import { newRule, registerRule } from '@nkardaz/typography-rules';
 
 // Replace rule — static string substitution
 registerRule('en', newRule('/english/copyright', /\(c\)/gi, '©'));
@@ -66,7 +66,7 @@ registerRule(
 );
 
 // Function rule — full custom processing function
-import { smartQuotes } from '@yalla/typography-rules/functions';
+import { smartQuotes } from '@nkardaz/typography-rules/functions';
 
 // Danish quotes: »Jeg husker, at hun sagde ›det her er vigtigt‹ i går.«
 registerRule(
@@ -80,8 +80,8 @@ registerRule(
 ### Registering multiple rules at once
 
 ```typescript
-import { newRule, registerRule } from '@yalla/typography-rules';
-import { DASHES } from '@yalla/typography-rules/glyphs';
+import { newRule, registerRule } from '@nkardaz/typography-rules';
+import { DASHES } from '@nkardaz/typography-rules/glyphs';
 
 registerRule(
   'en',
@@ -222,7 +222,7 @@ import {
   isRuleDisabled,
   isGloballyDisabled,
   clearBlacklist,
-} from '@yalla/typography-rules';
+} from '@nkardaz/typography-rules';
 ```
 
 #### `disableRule(rule)`
@@ -300,7 +300,7 @@ Built-in rule labels follow a consistent hierarchy:
 These are composable text-processing functions that can be used directly or
 wrapped with `newRule`.
 
-Must be imported with `@yalla/typography-rules/functions`
+Must be imported with `@nkardaz/typography-rules/functions`
 
 ### `smartQuotes(text, settings?)`
 
@@ -309,7 +309,7 @@ opening/closing quote pairs, with support for nested quotation levels and
 apostrophe detection.
 
 ```typescript
-import { smartQuotes } from '@yalla/typography-rules/functions';
+import { smartQuotes } from '@nkardaz/typography-rules/functions';
 
 smartQuotes('"Hello"'); // “Hello” (en defaults)
 smartQuotes('"He said \'hi\'"'); // “He said ‘hi’”
@@ -330,7 +330,7 @@ Inserts symbols (e.g. `,`) as thousands separators into large numeric sequences
 based on locale (uses `Intl.NumberFormat`).
 
 ```typescript
-import { smartNumberGrouping } from '@yalla/typography-rules/functions';
+import { smartNumberGrouping } from '@nkardaz/typography-rules/functions';
 
 smartNumberGrouping('Price: 1234567');
 // “Price: 1,234,567”
@@ -354,7 +354,7 @@ Collapses runs of two or more identical space characters into a single one. By
 default targets non-breaking, hair, and thin spaces.
 
 ```typescript
-import { clearSpaces } from '@yalla/typography-rules/functions';
+import { clearSpaces } from '@nkardaz/typography-rules/functions';
 
 clearSpaces('a  b  c'); // 'a b c'
 ```
@@ -389,7 +389,7 @@ longer last words, also protects the penultimate word with
 Wraps matched bracket-marker syntax into an HTML element node. Returns `Node[]`.
 
 ```typescript
-import { wrapWithTag } from '@yalla/typography-rules/functions';
+import { wrapWithTag } from '@nkardaz/typography-rules/functions';
 
 wrapWithTag('H[^2]O');
 // → [text('H'), sup([text('2')]), text('O')]
@@ -421,7 +421,7 @@ Parses ruby annotation syntax into a `<ruby>` node tree with `<rb>` / `<rt>`
 pairs. Returns `Node[]`.
 
 ```typescript
-import { rubyText } from '@yalla/typography-rules/functions';
+import { rubyText } from '@nkardaz/typography-rules/functions';
 
 rubyText('[:平安時代][:へいあんじだい]');
 // → ruby → [ rb('平安時代'), rt('へいあんじだい') ]
@@ -449,7 +449,7 @@ correct rendering of nuclear/chemical scripts on both sides of a base symbol.
 Returns `Node[]`.
 
 ```typescript
-import { chemNotation } from '@yalla/typography-rules/functions';
+import { chemNotation } from '@nkardaz/typography-rules/functions';
 
 chemNotation('Вода [%H(_2)-O]');
 chemNotation('[%(^14)(_6)C]');
@@ -493,7 +493,7 @@ chemNotation('[%(^14)(_6)C]');
 
 ## Glyphs
 
-The `@yalla/typography-rules/glyphs` export provides typed, prototype-enhanced
+The `@nkardaz/typography-rules/glyphs` export provides typed, prototype-enhanced
 glyph registries. All registries support shared utility methods.
 
 ### Available registries
@@ -528,7 +528,7 @@ DASHES.insert({ myDash: '\u2E1A' }); // mutably extend the set
 ### PUNCTUATION locale access
 
 ```typescript
-import { PUNCTUATION } from '@yalla/typography-rules/glyphs';
+import { PUNCTUATION } from '@nkardaz/typography-rules/glyphs';
 
 PUNCTUATION.get('ru', 'leftSided'); // common + ru leftSided merged
 PUNCTUATION.get('en', 'rightSided'); // common + en rightSided merged
@@ -549,14 +549,14 @@ PUNCTUATION.hasKey('de'); // false
 
 ## Aliases
 
-The `@yalla/typography-rules` export provides an `ALIAS` utility for mapping various locale identifiers to a single root key. All keys and values are automatically normalized to lowercase, and lookups are case-insensitive.
+The `@nkardaz/typography-rules` export provides an `ALIAS` utility for mapping various locale identifiers to a single root key. All keys and values are automatically normalized to lowercase, and lookups are case-insensitive.
 
 ### `createAlias(map)`
 
 Creates a normalized alias map with utility methods.
 
 ```typescript
-import { createAlias } from '@yalla/typography-rules';
+import { createAlias } from '@nkardaz/typography-rules';
 
 const ALIAS = createAlias({
   en: ['en-US', 'English'],
@@ -576,7 +576,7 @@ const ALIAS = createAlias({
 A pre-configured instance used internally for supported locales:
 
 ```typescript
-import { ALIAS } from '@yalla/typography-rules';
+import { ALIAS } from '@nkardaz/typography-rules';
 
 ALIAS.ru;               // ['ru-ru', 'russian', 'русский']
 ALIAS.resolve('Russian'); // 'ru'
@@ -587,7 +587,7 @@ ALIAS.has('Old English'); // true
 
 ## Helpers
 
-The `@yalla/typography-rules/helpers` export provides utilities for safe text
+The `@nkardaz/typography-rules/helpers` export provides utilities for safe text
 pipeline construction.
 
 ### Protection system
@@ -597,7 +597,7 @@ protection markers before typography transformations, then restores originals
 afterward.
 
 ```typescript
-import { protect, unprotect } from '@yalla/typography-rules/helpers';
+import { protect, unprotect } from '@nkardaz/typography-rules/helpers';
 
 const [protectedText, captured] = protect(text);
 // ... apply typography rules to `protectedText` ...
@@ -621,7 +621,7 @@ const result = unprotect(processed, captured);
 ### Pattern registry
 
 ```typescript
-import { createPatterns, PROTECTED_PATTERNS } from '@yalla/typography-rules/helpers';
+import { createPatterns, PROTECTED_PATTERNS } from '@nkardaz/typography-rules/helpers';
 
 const PATTERNS = createPatterns({
   email: /[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+/g,
@@ -643,7 +643,7 @@ import {
   joinNodes,
   splitNodes,
   NODE_MARKER,
-} from '@yalla/typography-rules/helpers';
+} from '@nkardaz/typography-rules/helpers';
 
 const joined = joinNodes(nodes); // 'text1\uE000\uEDFD\uF43Etext2'
 // ... apply rules to `joined` ...
@@ -872,7 +872,7 @@ import {
   renderNode,
   renderNodes,
   nodeToMdast,
-} from '@yalla/typography-rules';
+} from '@nkardaz/typography-rules';
 ```
 
 | Function      | Signature                                   | Description                                                         |
@@ -907,5 +907,5 @@ import type {
   RubyTextSettings,
   ChemNotationSettings,
   TagSettings,
-} from '@yalla/typography-rules';
+} from '@nkardaz/typography-rules';
 ```

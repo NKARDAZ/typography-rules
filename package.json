@@ -1,5 +1,5 @@
 {
-  "name": "@yalla/typography-rules",
+  "name": "@nkardaz/typography-rules",
   "version": "1.0.0",
   "description": "Rules package to be used in typography plugins. Glyphs library and helpers included.",
   "license": "MIT",
@@ -15,7 +15,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/DemerNkardaz/typography-rules"
+    "url": "git+https://github.com/DemerNkardaz/typography-rules.git"
   },
   "homepage": "https://github.com/DemerNkardaz/typography-rules#readme",
   "bugs": {
@@ -53,12 +53,6 @@
       "require": "./dist/style/main.css"
     }
   },
-  "files": [
-    "dist",
-    "package.json",
-    "README.md",
-    "LICENSE"
-  ],
   "bundleSizeLimit": 153600,
   "sideEffects": true,
   "engines": {

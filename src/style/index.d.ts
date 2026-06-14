@@ -1,1 +1,1 @@
-declare module '@yalla/typography-rules/style';
+declare module '@nkardaz/typography-rules/style';
