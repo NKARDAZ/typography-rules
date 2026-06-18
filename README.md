@@ -20,10 +20,27 @@ npm i @nkardaz/typography-rules
 
 ---
 
+## Family of @nkardaz typography packages
+
+<!-- prettier-ignore -->
+| Package | Type | Details |
+| ------- | ---- | ------- |
+| [Typography Rules](https://github.com/DemerNkardaz/typography-rules) | Rules engine | [![](https://img.shields.io/npm/v/%40nkardaz%2Ftypography-rules?logo=npm&labelColor=cb0000&color=fdfdfd)](https://www.npmjs.com/package/%40nkardaz%2Ftypography-rules) ![](https://img.shields.io/npm/dm/%40nkardaz%2Ftypography-rules?label=%F0%9F%A1%87&labelColor=cb0000&color=fdfdfd) ![](https://img.shields.io/npm/last-update/%40nkardaz%2Ftypography-rules?label=%F0%9F%A1%85&labelColor=cb0000&color=fdfdfd) |
+| [Typography Core](https://github.com/DemerNkardaz/typography-core) | Core | [![](https://img.shields.io/npm/v/%40nkardaz%2Ftypography-core?logo=npm&labelColor=cb0000&color=fdfdfd)](https://www.npmjs.com/package/%40nkardaz%2Ftypography-core) ![](https://img.shields.io/npm/dm/%40nkardaz%2Ftypography-core?label=%F0%9F%A1%87&labelColor=cb0000&color=fdfdfd) ![](https://img.shields.io/npm/last-update/%40nkardaz%2Ftypography-core?label=%F0%9F%A1%85&labelColor=cb0000&color=fdfdfd) |
+| **Adapters** | | |
+| [Remark Typography](https://github.com/DemerNkardaz/remark-typography) | Remark adapter | [![](https://img.shields.io/npm/v/%40nkardaz%2Fremark-typography?logo=npm&labelColor=cb0000&color=fdfdfd)](https://www.npmjs.com/package/%40nkardaz%2Fremark-typography) ![](https://img.shields.io/npm/dm/%40nkardaz%2Fremark-typography?label=%F0%9F%A1%87&labelColor=cb0000&color=fdfdfd) ![](https://img.shields.io/npm/last-update/%40nkardaz%2Fremark-typography?label=%F0%9F%A1%85&labelColor=cb0000&color=fdfdfd) |
+| [Rehype Typography](https://github.com/DemerNkardaz/rehype-typography) | Rehype adapter | [![](https://img.shields.io/badge/Coming-Soon%E2%80%A6-0?labelColor=fee036&color=fdfdfd)]() |
+| [Obsidian Typography](https://github.com/DemerNkardaz/obsidian-typography) | Obsidian adapter | [![](https://img.shields.io/badge/Coming-Soon%E2%80%A6-0?labelColor=fee036&color=fdfdfd)]() |
+| [Vanilla Typography](https://github.com/DemerNkardaz/vanilla-typography) | HTML5 adapter | [![](https://img.shields.io/badge/Coming-Soon%E2%80%A6-0?labelColor=fee036&color=fdfdfd)]() |
+| **Plugins** | | |
+| [Preview Typography](https://github.com/DemerNkardaz/obsidian-preview-typography) | Obsidian plugin | [![](https://img.shields.io/badge/Coming-Soon%E2%80%A6-0?labelColor=fee036&color=fdfdfd)]() |
+
+---
+
 ## Package Exports
 
-| Export path                         | Description                                                               |
-| ----------------------------------- | ------------------------------------------------------------------------- |
+| Export path                           | Description                                                               |
+| ------------------------------------- | ------------------------------------------------------------------------- |
 | `@nkardaz/typography-rules`           | Main entry — rules, store, types, functions                               |
 | `@nkardaz/typography-rules/glyphs`    | Glyph registries (DASHES, SPACES, PUNCTUATION, …)                         |
 | `@nkardaz/typography-rules/helpers`   | Text pipeline helpers (protect/unprotect, node markers, pattern registry) |
@@ -36,7 +53,10 @@ npm i @nkardaz/typography-rules
 ### Using default rules
 
 ```typescript
-import { initTypographyRules, getWeightedRules } from '@nkardaz/typography-rules';
+import {
+  initTypographyRules,
+  getWeightedRules,
+} from '@nkardaz/typography-rules';
 
 // Register all built-in rule groups (common, ru, en, …)
 initTypographyRules();
@@ -549,7 +569,9 @@ PUNCTUATION.hasKey('de'); // false
 
 ## Aliases
 
-The `@nkardaz/typography-rules` export provides an `ALIAS` utility for mapping various locale identifiers to a single root key. All keys and values are automatically normalized to lowercase, and lookups are case-insensitive.
+The `@nkardaz/typography-rules` export provides an `ALIAS` utility for mapping
+various locale identifiers to a single root key. All keys and values are
+automatically normalized to lowercase, and lookups are case-insensitive.
 
 ### `createAlias(map)`
 
@@ -564,12 +586,12 @@ const ALIAS = createAlias({
 });
 ```
 
-| Method | Description |
-| :--- | :--- |
-| `has(alias)` | Checks if an alias exists as a root key or an alternative name. |
-| `resolve(alias)` | Resolves an alias to its root key. |
-| `push(root, ...aliases)` | Adds new alternative names to an existing or new root key. |
-| `normalize(...alias)` | Helper to lowercase one or more strings. |
+| Method                   | Description                                                     |
+| :----------------------- | :-------------------------------------------------------------- |
+| `has(alias)`             | Checks if an alias exists as a root key or an alternative name. |
+| `resolve(alias)`         | Resolves an alias to its root key.                              |
+| `push(root, ...aliases)` | Adds new alternative names to an existing or new root key.      |
+| `normalize(...alias)`    | Helper to lowercase one or more strings.                        |
 
 ### Global `ALIAS`
 
@@ -578,7 +600,7 @@ A pre-configured instance used internally for supported locales:
 ```typescript
 import { ALIAS } from '@nkardaz/typography-rules';
 
-ALIAS.ru;               // ['ru-ru', 'russian', 'русский']
+ALIAS.ru; // ['ru-ru', 'russian', 'русский']
 ALIAS.resolve('Russian'); // 'ru'
 ALIAS.has('Old English'); // true
 ```
