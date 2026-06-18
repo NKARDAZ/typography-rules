@@ -11,20 +11,19 @@ const externalImportsPlugin = (format, relative = './') => ({
 		build.onResolve({ filter: /.*/ }, (args) => {
 			if (args.importer && args.path.includes('/glyphs')) {
 				return {
-					path: format === 'esm' ? relative + 'glyphs/index.mjs' : relative + 'glyphs/index.cjs',
+					path: relative + 'glyphs/index.mjs',
 					external: true,
 				};
 			}
 			if (args.importer && args.path.includes('/helpers')) {
 				return {
-					path: format === 'esm' ? relative + 'helpers/index.mjs' : relative + 'helpers/index.cjs',
+					path: relative + 'helpers/index.mjs',
 					external: true,
 				};
 			}
 			if (args.importer && args.path.includes('/functions')) {
 				return {
-					path:
-						format === 'esm' ? relative + 'functions/index.mjs' : relative + 'functions/index.cjs',
+					path: relative,
 					external: true,
 				};
 			}
@@ -57,16 +56,8 @@ const glyphsMJS = await build({
 	outfile: 'dist/glyphs/index.mjs',
 	plugins: [externalImportsPlugin('esm', '../')],
 });
-const glyphsCJS = await build({
-	...common,
-	entryPoints: ['src/glyphs/index.ts'],
-	format: 'cjs',
-	outfile: 'dist/glyphs/index.cjs',
-	plugins: [externalImportsPlugin('cjs', '../')],
-});
 
 await writeFile('dist/glyphs/meta-esm.json', JSON.stringify(glyphsMJS.metafile));
-await writeFile('dist/glyphs/meta-cjs.json', JSON.stringify(glyphsCJS.metafile));
 
 const helpersMJS = await build({
 	...common,
@@ -75,16 +66,8 @@ const helpersMJS = await build({
 	outfile: 'dist/helpers/index.mjs',
 	plugins: [externalImportsPlugin('esm', '../')],
 });
-const helpersCJS = await build({
-	...common,
-	entryPoints: ['src/helpers/index.ts'],
-	format: 'cjs',
-	outfile: 'dist/helpers/index.cjs',
-	plugins: [externalImportsPlugin('cjs', '../')],
-});
 
 await writeFile('dist/helpers/meta-esm.json', JSON.stringify(helpersMJS.metafile));
-await writeFile('dist/helpers/meta-cjs.json', JSON.stringify(helpersCJS.metafile));
 
 const functionsMJS = await build({
 	...common,
@@ -93,16 +76,8 @@ const functionsMJS = await build({
 	outfile: 'dist/functions/index.mjs',
 	plugins: [externalImportsPlugin('esm', '../')],
 });
-const functionsCJS = await build({
-	...common,
-	entryPoints: ['src/functions/index.ts'],
-	format: 'cjs',
-	outfile: 'dist/functions/index.cjs',
-	plugins: [externalImportsPlugin('cjs', '../')],
-});
 
 await writeFile('dist/functions/meta-esm.json', JSON.stringify(functionsMJS.metafile));
-await writeFile('dist/functions/meta-cjs.json', JSON.stringify(functionsCJS.metafile));
 
 const resultMJS = await build({
 	...common,
@@ -111,16 +86,8 @@ const resultMJS = await build({
 	outfile: 'dist/index.mjs',
 	plugins: [externalImportsPlugin('esm')],
 });
-const resultCJS = await build({
-	...common,
-	entryPoints: ['src/index.ts'],
-	format: 'cjs',
-	outfile: 'dist/index.cjs',
-	plugins: [externalImportsPlugin('cjs')],
-});
 
 await writeFile('dist/meta-esm.json', JSON.stringify(resultMJS.metafile));
-await writeFile('dist/meta-cjs.json', JSON.stringify(resultCJS.metafile));
 
 function getDirSize(dir) {
 	return readdirSync(dir).reduce((sum, f) => {
