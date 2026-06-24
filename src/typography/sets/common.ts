@@ -89,4 +89,15 @@ export default [
 
 	// Runt
 	newRule('/common/typography/runt', runt, undefined, Infinity),
+
+	newRule(
+		'/common/deformat/@style/decimal',
+		/@(style|class)\(([^)]*)\)/g,
+		(match): string => {
+			const header = match[1]!;
+			const style = match[2]!.replace(/(\d),(\d)/g, '$1.$2');
+			return `@${header}(${style})`;
+		},
+		Infinity
+	),
 ];

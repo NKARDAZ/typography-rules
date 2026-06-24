@@ -13,4 +13,20 @@
     -webkit-ruby-position: under;
     ruby-position: under;
   }
+
+  &.--center {
+    ruby-align: center;
+  }
+
+  &.--start {
+    ruby-align: start;
+  }
+
+  &.--space-between {
+    ruby-align: space-between;
+  }
+
+  &.--space-around {
+    ruby-align: space-around;
+  }
 }

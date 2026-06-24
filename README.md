@@ -48,6 +48,35 @@ npm i @nkardaz/typography-rules
 
 ---
 
+## Styles
+
+Optional companion stylesheet with modifier classes consumed by markup rules
+that render structural elements. Currently covers `<ruby>`; more elements
+will gain styles here as markup rules expand.
+
+```typescript
+import '@nkardaz/typography-rules/style';
+```
+
+### Ruby (`<ruby>`)
+
+Parental class: `@nkardaz-typography-ruby`
+
+| Class            | Effect                         |
+| ---------------- | ------------------------------- |
+| `--alternate`    | `ruby-position: alternate`      |
+| `--over`         | `ruby-position: over`           |
+| `--under`        | `ruby-position: under`          |
+| `--center`       | `ruby-align: center`            |
+| `--start`        | `ruby-align: start`             |
+| `--space-between`| `ruby-align: space-between`     |
+| `--space-around` | `ruby-align: space-around`      |
+
+Apply these via the `className` tag setting on `rubyText`, or per-instance
+through its `@class()` header, e.g. `[@class(--under --center):...]`.
+
+---
+
 ## Quick Start
 
 ### Using default rules
@@ -449,7 +478,31 @@ rubyText('[:平安時代][:へいあんじだい]');
 // Multiple base|furigana pairs separated by |
 rubyText('[:東|京][:とう|きょう]');
 // → ruby → [ rb('東'), rt('ひがし'), rb('京'), rt('きょう') ]
+
+// Optional @class()/@style() header — placed between the wrapper-open
+// character and the marker. Base bracket targets <ruby>, furigana bracket
+// targets <rt>. @class and @style may appear in any order; either, both,
+// or neither may be present.
+rubyText(
+  '[@class(--center):высшая сила][@class(&__large-font) @style(font-weight: 800):Астарот]',
+  { marker: ':' },
+  { className: '@nkardaz-typography-ruby' }
+);
+// → <ruby class="@nkardaz-typography-ruby --center">
+//     <rb>высшая сила</rb>
+//     <rt class="@nkardaz-typography-ruby__large-font" style="font-weight: 800">Астарот</rt>
+//   </ruby>
 ```
+
+**Header syntax:**
+- A class name is used as-is — write modifier classes (`--under`, `--center`,
+  …) exactly as they appear in the stylesheet.
+- A class name prefixed with `&` is concatenated onto the first class of
+  `tagSettings.className` (e.g. `&__large-font` →
+  `@nkardaz-typography-ruby__large-font`).
+- `@class`/`@style` on the **base** (first) bracket apply to the `<ruby>`
+  element; on the **furigana** (second) bracket they apply to that pair's
+  `<rt>` element.
 
 **Settings:**
 
@@ -458,7 +511,9 @@ rubyText('[:東|京][:とう|きょう]');
 | `marker`  | `string`           | `':'`        | Character after opening bracket associated with the ruby |
 | `wrapper` | `[string, string]` | `['[', ']']` | Bracket pair delimiting the ruby group                   |
 
-**Tag settings:** same as `wrapWithTag`.
+**Tag settings:** same as `wrapWithTag` — applies to the `<ruby>` element and
+is merged with any per-instance `@class()`/`@style()` header from the base
+bracket.
 
 ---
 
@@ -731,15 +786,12 @@ Shared named expression patterns used across common rules
 | Label                       | Pattern / Trigger                     | Replacement        | Description                                                               |
 | --------------------------- | ------------------------------------- | ------------------ | ------------------------------------------------------------------------- |
 | `/common/wraps/chem`        | `[%…]` marker syntax                  | `<math>` node tree | Parses chemical notation into MathML `<mmultiscripts>` via `chemNotation` |
-| `/common/wraps/ruby` (`?:`) | `[?:base\|…][?:annotation\|…]` syntax | `<ruby>` node tree | Alternate ruby style (`--alternate`), via `rubyText`                      |
-| `/common/wraps/ruby` (`!:`) | `[!:base\|…][!:annotation\|…]` syntax | `<ruby>` node tree | Ruby annotation below the base (`--under`), via `rubyText`                |
-| `/common/wraps/ruby` (`:`)  | `[:base\|…][:annotation\|…]` syntax   | `<ruby>` node tree | Ruby annotation above the base (`--over`), via `rubyText`                 |
+| `/common/wraps/ruby` | `[:base\|…][:annotation\|…]` syntax, with optional `@class()`/`@style()` header | `<ruby>` node tree | Ruby annotation, styled via `--over`/`--under`/`--alternate`/`--center`/`--start`/`--space-between`/`--space-around` classes or custom styles, via `rubyText` |
 | `/common/wraps/sup`         | `[^…]` marker syntax                  | `<sup>` node       | Wraps bracket-marker content in a superscript element via `wrapWithTag`   |
 | `/common/wraps/sub`         | `[_…]` marker syntax                  | `<sub>` node       | Wraps bracket-marker content in a subscript element via `wrapWithTag`     |
 
 > **Note on markup rule order:** rules are registered with weight `Infinity` and
-> applied in the order shown — `chem` first, ruby variants from least-specific
-> to most-specific marker (to avoid conflicts), then `sup`/`sub` last.
+> applied in the order shown — `chem` first, then `ruby`, then `sup`/`sub` last.
 
 ---
 

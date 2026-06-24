@@ -30,18 +30,6 @@ export default [
 	newRule(
 		'/common/wraps/ruby',
 		rubyText,
-		[{ marker: '?:' }, { className: '@nkardaz-typography-ruby --alternate' }],
-		Infinity
-	),
-	newRule(
-		'/common/wraps/ruby',
-		rubyText,
-		[{ marker: '!:' }, { className: '@nkardaz-typography-ruby --under' }],
-		Infinity
-	),
-	newRule(
-		'/common/wraps/ruby',
-		rubyText,
 		[{ marker: ':' }, { className: '@nkardaz-typography-ruby --over' }],
 		Infinity
 	),
