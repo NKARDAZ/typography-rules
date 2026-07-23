@@ -8,7 +8,7 @@ await rm('dist', { recursive: true, force: true });
 const common = {
 	bundle: true,
 	treeShaking: true,
-	sourcemap: true,
+	sourcemap: false,
 	metafile: true,
 	platform: 'neutral',
 	target: 'es2022',

@@ -148,12 +148,12 @@ export default [
 	newRule(
 		'/russian/compositions/initials',
 		/([а-яёА-ЯЁ]\.)[\s]([а-яёА-ЯЁ]\.)[\s]([а-яёА-ЯЁ][а-яёА-ЯЁ]+)/g,
-		`$1${SPACES.thin}$2${SPACES.thin}$3`
+		`$1${SPACES.noBreakNarrow}$2${SPACES.noBreakNarrow}$3`
 	),
 	newRule(
 		'/russian/compositions/initials',
 		/([а-яёА-ЯЁ][а-яёА-ЯЁ]+)[\s]([а-яёА-ЯЁ}]\.)[\s]([а-яёА-ЯЁ]\.)/g,
-		`$1${SPACES.thin}$2${SPACES.thin}$3`
+		`$1${SPACES.noBreakNarrow}$2${SPACES.noBreakNarrow}$3`
 	),
 
 	newRule(
